@@ -1,0 +1,13 @@
+{
+    "intelephense.environment.phpVersion": "8.3.2",
+    "php.docblock.classSnippet": {
+
+    },
+    "intelephense.phpdoc.classTemplate": {
+        
+        "summary": "$1",
+        "tags": [
+            "@package ${1:$SYMBOL_NAMESPACE}"
+        ]
+    }
+}
