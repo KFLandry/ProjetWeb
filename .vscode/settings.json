@@ -1,13 +1,19 @@
 {
-    "intelephense.environment.phpVersion": "8.3.2",
-    "php.docblock.classSnippet": {
-
-    },
-    "intelephense.phpdoc.classTemplate": {
-        
-        "summary": "$1",
-        "tags": [
-            "@package ${1:$SYMBOL_NAMESPACE}"
-        ]
-    }
+    "php.version": "8.3",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "database": "educycle",
+            "username": "root",
+            "name": "dbConnnexion",
+            "password": ""
+        }
+    ],
 }

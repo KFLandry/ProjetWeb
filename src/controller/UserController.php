@@ -1,35 +1,66 @@
-<?
+<?php
 namespace Controller;
 use Model\User;
-use Controller\AbstractController;
 
 class UserController extends AbstractController{
     private $user;
+    private $headers = [
+        'typ' => 'JWT',
+        'alg' => 'HS256'
+    ];
     public function handleRequest(){
         $this->user = new User();
-        switch ($this->ressource){
-            case "signup":
-                if ($$this->user->signup($this->body)){
-                    $result =  [ "statut" => 1,"message" =>  "Sign up succed"];
-                }else{
-                    $result =  [ "statut" => 0,"message" =>  "Sign up failed"];
+        switch ($this->method){
+            case "GET":
+                if ($this->ressource =="user"){
+                    if ($this->id != 0){
+                        $this->user->get($this->id);
+                    }else{
+                        $this->user->getAll();
+                    }
+                    $this->result =  $this->user->getResult();
                 }
-                echo json_encode($result);
-            case "login" : 
-                if ($this->user->login($this->param)){
-                    $result =  [ "statut" => 1,"message" =>  "login succed"];
-                }else{
-                    $result =  [ "statut" => 0,"message" =>  "login failed.Login or password wrong"];    
+                break;
+
+            case "POST":
+                switch ($this->ressource){
+                    // Le jwt d'autorisation sera crée à chaque inscription
+                    case "signup":
+                        if ($this->user->create($this->body)){
+                            // On declare le header du token conformemenet à la doc
+                            // Ici le payload C'est quelque info sur l'utillisteur
+                            $this->result =  ["statut" => 1,"message" =>  "Signup succeed","token" => $this->jwt->generate($this->headers, $this->user->getResult(),SECRET),"data" => $this->user->getResult()];
+                        }else{
+                            $this->result =  [ "statut" => 0,"message" =>  "Signup failed"];
+                        }
+                        break;
+                    case "login" : 
+                        if ($this->user->login($this->body)){
+                            $this->result =  [ "statut" => 1,"message" =>  "login succeed","token" => $this->jwt->generate($this->headers, $this->user->getResult(),SECRET),"data" => $this->user->getResult()];
+                        }else{
+                            $this->result =  [ "statut" => 0,"message" =>  "login failed. Login or password wrong"];    
+                        }
+                        break; 
+                    case "updateUser":
+                        if ($this->user->update($this->body)){
+                            $this->result = [ "statut"=> 1,"message"=> "Succeed"];
+                        }else{
+                            $this->result = [ "statut"=> 0,"message"=> "Failed"];
+                        };
+                        break;
                 }
-                echo json_encode($result);
-            case "user" : 
-                if (!empty($thisparam)){
-                    $this->user->getUser($this->param["id"]);
-                }else{
-                    $this->user->getUser($this->param["id"]);
+                break;
+            case "DELETE":
+                if ($this->ressource == "user"){
+                    if ($this->user->delete($this->id)){
+                        $this->result = [ "statut"=> 1,"message"=> "Succeed"];
+                    }else{
+                        $this->result = [ "statut"=> 0,"message"=> "Failed"];
+                    };
                 }
-                $result =  $this->user->getResult();
-                echo json_encode($result);
-        }
+            }
+            http_response_code(200);
+            echo json_encode($this->result);
+            exit;
     }
 }
