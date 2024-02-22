@@ -16,8 +16,11 @@ abstract class AbstractController{
         $uri =  explode("/",$_SERVER["REQUEST_URI"]);
         $this->ressource  = $uri[1];
         $this->method = $_SERVER["REQUEST_METHOD"];
-        $body  = json_decode(file_get_contents("php://input"),true);
-        $this->body  = $body;
+        if(file_get_contents("php://input")){
+            $this->body  = json_decode(file_get_contents("php://input"),true);
+        }else{
+            $this->body = $_REQUEST;       
+        }
         $this->id = count($uri)> 2 ? $uri[2] : 0;
     }
     public abstract function handleRequest ();

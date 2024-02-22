@@ -23,7 +23,6 @@ abstract class AbstractModel{
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
-        
     }
     // public function getAll(int $id){
     //     try{

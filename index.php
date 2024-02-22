@@ -2,7 +2,6 @@
 // Les en-têtes CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
-header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers:*");
 
 //On renvoie les authorizations CORS au navigateur qui emet les requetes 
@@ -32,7 +31,7 @@ $ressource  = $uri[1];
 
 //Token d'autorisation est indispensable pour toute les requêtes sauf celle d'authentification et de recuperation
 
-if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHOD'] === "GET") {
+if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHOD'] === "GET" or isset($_REQUEST)) {
 }else{
     $token = "";
     if(isset($_SERVER['Authorization'])){

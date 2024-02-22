@@ -30,7 +30,7 @@ class User extends AbstractModel{
             $this->result['media'] =  $this->media->get($row['id']);
             // Je suppime de mdp
             $this->result['password'] = "";
-            $this->result =  $row;   
+            $this->result =  $row; 
         }catch(\PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;

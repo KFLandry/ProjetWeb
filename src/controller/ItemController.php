@@ -9,20 +9,27 @@ class ItemController extends AbstractController{
         $this->item = new Item();
         switch ($this->method){
             case "GET":
-                if ($this->ressource =="item"){
-                    if ($this->id != 0){
-                        $this->item->get($this->id);
-                    }else{
-                        $this->item->getAll();
-                    }
-                    $this->result =  $this->item->getResult();
+                switch ($this->ressource){
+                    case "item" : 
+                        if ($this->id != 0){
+                            $this->item->get($this->id);
+                        }else{
+                            $this->item->getAll();
+                        }
+                        $this->result =  $this->item->getResult(); 
+                        break;
+                    case "items":
+                        if( $this->id != 0){
+                            $this->item->getAll($this->id);
+                        }
+                        break;
                 }
                 break;
-
             case "POST":
                 switch ($this->ressource){
                     case "item":
                         $this->item->create($this->body);
+                        $this->result = [ "statut"=> 1,"message"=> "Succeed"];
                         break;
                     case "updateItem":
                         if ($this->item->update($this->body)){

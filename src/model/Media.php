@@ -34,24 +34,24 @@ final class Media extends AbstractModel {
             exit;
         }
     }
-    public function moveMedia($file){
+    public function moveMedia($idItem,$category){
         $uploads_dir = 'ressources\images';
-        foreach ($_FILES["pictures"]["error"] as $key => $error) {
+        foreach ($_FILES["files"]["error"] as $key => $error) {
             if ($error == UPLOAD_ERR_OK) {
-                $tmp_name = $_FILES["pictures"]["tmp_name"][$key];
-                // basename() may prevent filesystem traversal attacks;
-                // further validation/sanitation of the filename may be appropriate
-                $name = basename($_FILES["pictures"]["name"][$key]);
+                $tmp_name = $_FILES["files"]["tmp_name"][$key];
+                $name = basename($_FILES["files"]["name"][$key]);
                 move_uploaded_file($tmp_name, "$uploads_dir/$name");
-    }
-}
-        
+                $data = Array();
+                $data['idUser'] =  $_POST['idUser'];
+                $data['idItem'] = $idItem;
+                $data['name'] =  $name;
+                $data['category'] =  $category;
+                $data['location'] = "$uploads_dir/$name";
+                $this->create($data);
+        }
+    }  
     }
     public function create($data){
-        // $_FILE
-        if(isset($_FILES['photos'])){
-            echo("C'est bon j'ai des fichiers!");
-        }
         try{
             $sql =  "INSERT INTO $this->table (idUser,idItem,name,category,location) VALUES (:idUser,:idItem,:name,:category,:location)";
             $stmt = $this->con->prepare($sql);

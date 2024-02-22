@@ -20,14 +20,14 @@ final class Item extends AbstractModel {
             exit;
         }
     }
-    public function getAll(){
+    public function getAll(int $idUser = 0){
         try{
-            $sql ="SELECT * FROM $this->table";
+            $sql = $idUser == 0 ? "SELECT * FROM $this->table" : "SELECT * FROM $this->table WHERE idUser=$idUser";
             $stmt= $this->con->query($sql);
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($rows as $row) {
-                $row['medias'] =  $this->media->getAll($row['id']);
-            }   
+            for ($i = 0; $i < count($rows); $i++){
+                $rows[$i]['medias'] =  $this->media->getAll($rows[$i]['id']);
+            }
             $this->result =  $rows;
         }catch(PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
@@ -35,13 +35,25 @@ final class Item extends AbstractModel {
         }
     }
     public function create($data){
+        // Je insère l'annonce en base et je déplace les images vers le repertoire des images de serveurs
         try{
             $sql =  "INSERT INTO $this->table (name,residence,worth,state,description,available,period,category) VALUES (:name,:residence,:worth,:state,:description,:available,:period,:category)";
             $stmt = $this->con->prepare($sql);
-            if ($stmt->execute($data)){
-                $sql = "SELECT * FROM ed_user WHERE id=LAST_INSERT_ID()";
+            $stmt->bindParam(':name', $data['name']);
+            $stmt->bindParam(':residence', $data['residence']);
+            $stmt->bindParam(':worth', $data['worth']);
+            $stmt->bindParam(':state', $data['state']);
+            $stmt->bindParam(':description', $data['description']);
+            $stmt->bindParam(':period', $data['period']);
+            $stmt->bindParam(':category', $data['category']);
+            $stmt->bindParam(':available', $data['available']);
+            $stmt->bindParam(':publishedDate', date("Y-m-d"));
+
+            if ($stmt->execute()){
+                $sql = "SELECT * FROM ed_item WHERE id=LAST_INSERT_ID()";
                 $stmt =  $this->con->query($sql);
-                $this->result =  $stmt->fetch(PDO::FETCH_ASSOC);
+                $this->result = $stmt->fetch(PDO::FETCH_ASSOC);
+                $this->media->moveMedia($this->result['id'],"descriptive");
                 return  true;
             }
         }catch(PDOException $e){
