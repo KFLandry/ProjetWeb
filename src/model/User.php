@@ -17,20 +17,38 @@ class User extends AbstractModel{
         Parent::__construct("ed_user");
         $this->media = new Media('ed_user');
     }
-    public function get(int $id){
+    public function get(int $id,bool $restrict = false){
         try{
-            $sql ="SELECT * 
-            FROM ed_user 
-            JOIN ed_media 
-            ON ed_user.id =  ed_media.idUser 
-            WHERE ed_user.id=$id";
+            // Mysql ne prend pas en compte les FULL JOIN par consequent on fait une union d'une d'une LEFT JOIN  et d'une RIGHT JOIN
+            $sql ="SELECT *
+            FROM ed_user
+            LEFT JOIN ed_media ON ed_user.id = ed_media.idUser
+            WHERE ed_user.id = $id
+            UNION
+            SELECT *
+            FROM ed_user
+            RIGHT JOIN ed_media ON ed_user.id = ed_media.idUser
+            WHERE ed_user.id = $id;
+            ";
+            
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $this->result =  $row;
-            $this->result['media'] =  $this->media->get($row['id']);
-            // Je suppime de mdp
-            $this->result['password'] = "";
-            $this->result =  $row; 
+            if ($row){
+                $this->result =  $row;
+                if ($row['id']) {
+                    $this->result['media'] = $this->media->get($row['id']);
+                }
+                // Je suppime de mdp
+                $this->result['password'] = "";
+                if (!$restrict){
+                    $this->result =  $row; 
+                }else{ 
+                    $result = [];
+                    $result['id'] =  $row['id'];
+                    $result['name'] = $row['firstName'].' '.$row['lastName'];
+                    return $result;
+                }
+            }else $this->result = [];
         }catch(\PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
@@ -51,7 +69,9 @@ class User extends AbstractModel{
                     $this->result =  $row;
                     // Je suppime de mdp
                     $this->result['password'] = "";
-                    $this->result['media'] = $this->media->get($row['id']);
+                    if ($row['id']) {
+                        $this->result['media'] = $this->media->get($row['id']);
+                    }
                     return true;
                 }
             }

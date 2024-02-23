@@ -4,9 +4,11 @@ use PDO;
 use PDOException;
 final class Item extends AbstractModel {
     private $media;
+    private $user;
     public function __construct(){
         parent::__construct("ed_item");
         $this->media = new Media('ed_item');
+        $this->user =  new User();
     }
     public function getItem($id){
         try{
@@ -27,6 +29,8 @@ final class Item extends AbstractModel {
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
             for ($i = 0; $i < count($rows); $i++){
                 $rows[$i]['medias'] =  $this->media->getAll($rows[$i]['id']);
+                 $publisher =  $this->user->get($rows[$i]['idUser'],true);
+                 $rows[$i]['publisher'] = $publisher; 
             }
             $this->result =  $rows;
         }catch(PDOException $e){
