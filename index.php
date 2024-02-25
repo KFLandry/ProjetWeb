@@ -84,6 +84,7 @@ switch ($ressource){
         $controller = new CommentController();
         break;
     case "item":
+    case "items":
         $controller = new ItemController();
         break;
     case "address":

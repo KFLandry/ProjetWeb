@@ -22,7 +22,8 @@ class MediaController extends AbstractController{
             case "POST":
                 switch ($this->ressource){
                     case 'media' :  
-                        $this->media->create($this->id);
+                        $this->media->moveMedia("",$this->body['idUser'],$this->body['name']);
+                        break;
                     case "updateMedia":
                         if ($this->media->update($this->body)){
                             $this->result = [ "statut"=> 1,"message"=> "Succeed"];

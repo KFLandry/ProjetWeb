@@ -14,7 +14,7 @@ final class Media extends AbstractModel {
     }
     public function get($id){
         try{
-            $sql ="SELECT ed_media.id,ed_media.idItem,ed_media.category,ed_media.description,ed_media.location FROM ed_media JOIN $this->table_ass ON $this->table.id$this->field_ass = $this->table_ass.id WHERE $this->table.id$this->field_ass=$id";
+            $sql ="SELECT ed_media.id,ed_media.idItem,ed_media.category,ed_media.description,ed_media.location FROM ed_media JOIN $this->table_ass ON $this->table.id$this->field_ass = $this->table_ass.id WHERE $this->table.id$this->field_ass=$id ORDER BY id DESC ";
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row;
@@ -34,22 +34,38 @@ final class Media extends AbstractModel {
             exit;
         }
     }
-    public function moveMedia($idItem,$category){
-        $uploads_dir = 'ressources\images';
-        foreach ($_FILES["files"]["error"] as $key => $error) {
-            if ($error == UPLOAD_ERR_OK) {
-                $tmp_name = $_FILES["files"]["tmp_name"][$key];
-                $name = basename($_FILES["files"]["name"][$key]);
+    public function moveMedia($idItem =null, $idUser =null, $nameInput = "files"){
+        $uploads_dir = 'ressources/images';
+        if (isset($_FILES["files"])){
+            foreach ($_FILES["files"]["error"] as $key => $error) {
+                if ($error == UPLOAD_ERR_OK) {
+                    $tmp_name = $_FILES["files"]["tmp_name"][$key];
+                    $name = basename($_FILES["files"]["name"][$key]);
+                    move_uploaded_file($tmp_name, "$uploads_dir/$name");
+                    $data = Array();
+                    $data['idUser'] =  $idUser;
+                    $data['idItem'] = $idItem;
+                    $data['name'] =  $name;
+                    $data['category'] =  $nameInput;
+                    $data['location'] = "$uploads_dir/$name";
+                    $this->create($data);
+                }
+            }
+        }else if (isset($_FILES[$nameInput])){
+            $file = $_FILES[$nameInput];
+            if ($file['error'] == UPLOAD_ERR_OK) {
+                $tmp_name = $file["tmp_name"];
+                $name = basename($file["name"]);
                 move_uploaded_file($tmp_name, "$uploads_dir/$name");
                 $data = Array();
-                $data['idUser'] =  $_POST['idUser'];
+                $data['idUser'] =  $idUser;
                 $data['idItem'] = $idItem;
                 $data['name'] =  $name;
-                $data['category'] =  $category;
+                $data['category'] =  $nameInput;
                 $data['location'] = "$uploads_dir/$name";
                 $this->create($data);
-        }
-    }  
+            }
+        }  
     }
     public function create($data){
         try{

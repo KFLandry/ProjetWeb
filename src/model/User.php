@@ -20,26 +20,14 @@ class User extends AbstractModel{
     public function get(int $id,bool $restrict = false){
         try{
             // Mysql ne prend pas en compte les FULL JOIN par consequent on fait une union d'une d'une LEFT JOIN  et d'une RIGHT JOIN
-            $sql ="SELECT *
-            FROM ed_user
-            LEFT JOIN ed_media ON ed_user.id = ed_media.idUser
-            WHERE ed_user.id = $id
-            UNION
-            SELECT *
-            FROM ed_user
-            RIGHT JOIN ed_media ON ed_user.id = ed_media.idUser
-            WHERE ed_user.id = $id;
-            ";
+            $sql ="SELECT * FROM  ed_user WHERE id = $id";
             
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row){
                 $this->result =  $row;
-                if ($row['id']) {
-                    $this->result['media'] = $this->media->get($row['id']);
-                }
+                $this->result['medias'] = $this->media->get($id);
                 // Je suppime de mdp
-                $this->result['password'] = "";
                 if (!$restrict){
                     $this->result =  $row; 
                 }else{ 
@@ -70,7 +58,7 @@ class User extends AbstractModel{
                     // Je suppime de mdp
                     $this->result['password'] = "";
                     if ($row['id']) {
-                        $this->result['media'] = $this->media->get($row['id']);
+                        $this->result['medias'] = $this->media->get($row['id']);
                     }
                     return true;
                 }
@@ -105,11 +93,12 @@ class User extends AbstractModel{
     }
     public function create($data) : bool {
         try{
-            $sql =  "INSERT INTO ed_user (role,firstName,lastName,email,phone,birthday,password) VALUES (:role,:firstName,:lastName,:email,:phone,:birthday,:password);";
+            $sql =  "INSERT INTO ed_user (role,firstName,lastName,email,phone,birthday,password,dateCreation) VALUES (:role,:firstName,:lastName,:email,:phone,:birthday,:password,:dateCreation);";
             $stmt =  $this->con->prepare($sql);
             //On hashe le mot de passe avant de l'enregistrer avec une cle de sallage personnalisée
             $password =  $data["password"].SALTING_KEY;
             $data["password"] =  password_hash($password,PASSWORD_DEFAULT); 
+            $date['dateCreation'] =  date('Y-m-d');
             $stmt->execute($data);
             $sql = "SELECT * FROM ed_user WHERE id=LAST_INSERT_ID()";
             $stmt =  $this->con->query($sql);

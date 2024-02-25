@@ -20,7 +20,8 @@ class ItemController extends AbstractController{
                         break;
                     case "items":
                         if( $this->id != 0){
-                            $this->item->getAll($this->id);
+                            $this->item->getAll($this->id);  
+                            $this->result = $this->item->getResult();
                         }
                         break;
                 }

@@ -22,7 +22,7 @@ final class Item extends AbstractModel {
             exit;
         }
     }
-    public function getAll(int $idUser = 0){
+    public function getAll($idUser = 0){
         try{
             $sql = $idUser == 0 ? "SELECT * FROM $this->table" : "SELECT * FROM $this->table WHERE idUser=$idUser";
             $stmt= $this->con->query($sql);
@@ -57,7 +57,7 @@ final class Item extends AbstractModel {
                 $sql = "SELECT * FROM ed_item WHERE id=LAST_INSERT_ID()";
                 $stmt =  $this->con->query($sql);
                 $this->result = $stmt->fetch(PDO::FETCH_ASSOC);
-                $this->media->moveMedia($this->result['id'],"descriptive");
+                $this->media->moveMedia($this->result['id'],"","");
                 return  true;
             }
         }catch(PDOException $e){
