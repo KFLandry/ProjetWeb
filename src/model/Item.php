@@ -10,12 +10,13 @@ final class Item extends AbstractModel {
         $this->media = new Media('ed_item');
         $this->user =  new User();
     }
-    public function getItem($id){
+    public function get($id){
         try{
             $sql ="SELECT * FROM $this->table WHERE id=$id";
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $row['medias'] = $this->media->getAll($row['id']);
+            $medias  =  $this->media->getAll($row['id']);
+            $row['medias'] = $medias;
             $this->result =  $row;
         }catch(PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);

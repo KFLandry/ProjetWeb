@@ -24,17 +24,6 @@ abstract class AbstractModel{
             exit;
         }
     }
-    // public function getAll(int $id){
-    //     try{
-    //         $sql ="SELECT * FROM $this->table WHERE id=$id";
-    //         $stmt= $this->con->query($sql);
-    //         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    //         $this->result =  $row;
-    //     }catch(\PDOException $e){
-    //         echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
-    //         exit;
-    //     }
-    // }
     public abstract function create($data);
     public function update($data){
         try{
