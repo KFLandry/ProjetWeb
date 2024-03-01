@@ -83,6 +83,7 @@ switch ($ressource){
     case "comment":
         $controller = new CommentController();
         break;
+    case "recover":    
     case "item":
     case "items":
         $controller = new ItemController();

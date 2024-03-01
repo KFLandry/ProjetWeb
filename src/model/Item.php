@@ -17,6 +17,8 @@ final class Item extends AbstractModel {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $medias  =  $this->media->getAll($row['id']);
             $row['medias'] = $medias;
+            $publisher =  $this->user->get($row['idUser'],true);
+            $row['publisher'] = $publisher; 
             $this->result =  $row;
         }catch(PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);

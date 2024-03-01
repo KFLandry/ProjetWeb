@@ -1,12 +1,15 @@
 <?php 
 namespace Controller;
 use Controller\AbstractController;
+use Model\Donation;
 use Model\Item;
 
 class ItemController extends AbstractController{
     private $item;
+    private $donation;
     public function handleRequest(){
         $this->item = new Item();
+        $this->donation = new Donation();
         switch ($this->method){
             case "GET":
                 switch ($this->ressource){
@@ -33,12 +36,14 @@ class ItemController extends AbstractController{
                         $this->result = [ "statut"=> 1,"message"=> "Succeed"];
                         break;
                     case "updateItem":
-                        if ($this->item->update($this->body)){
-                            $this->result = [ "statut"=> 1,"message"=> "Succeed"];
-                        }else{
-                            $this->result = [ "statut"=> 0,"message"=> "Failed"];
-                        };
+                        $this->result = $this->item->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] :[ "statut"=> 0,"message"=> "Failed"];
                         break;
+                    case "recover":
+                        $this->donation->create($this->body);
+                        $fields = Array();
+                        $fields["id"] = $this->body['idItem'];
+                        $fields["statut"] = "En attente de validation";
+                        $this->result = $this->item->update($fields) ? [ "statut"=> 1,"message"=> "Succeed"] :[ "statut"=> 0,"message"=> "Failed"];
                 }
                 break;
             case "DELETE":

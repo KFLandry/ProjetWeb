@@ -34,6 +34,8 @@ class User extends AbstractModel{
                     $result = [];
                     $result['id'] =  $row['id'];
                     $result['name'] = $row['firstName'].' '.$row['lastName'];
+                    $result['dateCreation'] = $row['dateCreation'];
+                    $result['medias'] = $this->media->get($id);
                     return $result;
                 }
             }else $this->result = [];
@@ -56,7 +58,7 @@ class User extends AbstractModel{
                 if (password_verify($password.SALTING_KEY,$row["password"])){
                     $this->result =  $row;
                     // Je suppime de mdp
-                    $this->result['password'] = "";
+                    unset($row["password"]);
                     if ($row['id']) {
                         $this->result['medias'] = $this->media->get($row['id']);
                     }
@@ -103,6 +105,7 @@ class User extends AbstractModel{
             $sql = "SELECT * FROM ed_user WHERE id=LAST_INSERT_ID()";
             $stmt =  $this->con->query($sql);
             $this->result = $stmt->fetch(PDO::FETCH_ASSOC);
+            unset($this->result ["password"]);
             return  true;
         }catch(\PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
