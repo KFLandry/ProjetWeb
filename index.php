@@ -1,11 +1,11 @@
 <?php
 // Les en-têtes CORS
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers:*");
 
-//On renvoie les authorizations CORS au navigateur qui emet les requetes 
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+//On renvoie les authorisations CORS au navigateur qui emet les requetes 
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     // 204 pour car c'est une reponse sont contenu: No content 
     http_response_code(204);
     exit;
@@ -22,6 +22,7 @@ use Controller\UserController;
 use Controller\MediaController;
 use Controller\AddressController;
 use Controller\CommentController;
+use Controller\DonationController;
 
 // http_response_code(204);
 
@@ -87,6 +88,9 @@ switch ($ressource){
     case "item":
     case "items":
         $controller = new ItemController();
+        break;
+    case "donation":
+        $controller = new DonationController();
         break;
     case "address":
         $controller = new AddressController();

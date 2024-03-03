@@ -9,6 +9,8 @@ final class Item extends AbstractModel {
         parent::__construct("ed_item");
         $this->media = new Media('ed_item');
         $this->user =  new User();
+
+        
     }
     public function get($id){
         try{

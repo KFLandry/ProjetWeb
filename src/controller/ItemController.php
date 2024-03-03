@@ -14,7 +14,7 @@ class ItemController extends AbstractController{
             case "GET":
                 switch ($this->ressource){
                     case "item" : 
-                        if ($this->id != 0){
+                        if ($this->id != 0 && $this->id !=""){
                             $this->item->get($this->id);
                         }else{
                             $this->item->getAll();
@@ -35,9 +35,6 @@ class ItemController extends AbstractController{
                         $this->item->create($this->body);
                         $this->result = [ "statut"=> 1,"message"=> "Succeed"];
                         break;
-                    case "updateItem":
-                        $this->result = $this->item->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] :[ "statut"=> 0,"message"=> "Failed"];
-                        break;
                     case "recover":
                         $this->donation->create($this->body);
                         $fields = Array();
@@ -46,6 +43,12 @@ class ItemController extends AbstractController{
                         $this->result = $this->item->update($fields) ? [ "statut"=> 1,"message"=> "Succeed"] :[ "statut"=> 0,"message"=> "Failed"];
                 }
                 break;
+            case "PATCH" :
+                switch ($this->ressource){
+                    case "item":
+                        $this->result = $this->item->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] :[ "statut"=> 0,"message"=> "Failed"];
+                        break;
+                }
             case "DELETE":
                 if ($this->ressource == "item"){
                     if ($this->item->delete($this->id)){
