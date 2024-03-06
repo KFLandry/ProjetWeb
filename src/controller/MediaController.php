@@ -22,7 +22,7 @@ class MediaController extends AbstractController{
             case "POST":
                 switch ($this->ressource){
                     case 'media' :  
-                        $this->media->moveMedia("",$this->body['idUser'],$this->body['name']);
+                        $this->result = $this->media->moveMedia("",$this->body['idUser'],$this->body['name']) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
                         break;
                     case "updateMedia":
                         if ($this->media->update($this->body)){
@@ -32,6 +32,9 @@ class MediaController extends AbstractController{
                         };
                         break;
                 }
+                break;
+            case "PATCH":
+                $this->result = $this->media->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
                 break;
             case "DELETE":
                 if ($this->ressource == "media"){

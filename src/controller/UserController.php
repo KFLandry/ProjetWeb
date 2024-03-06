@@ -19,9 +19,19 @@ class UserController extends AbstractController{
                         $this->user->getAll();
                     }
                     $this->result =  $this->user->getResult();
+                } else if ($this->ressource == 'accountVerification'){
+                    // La verificaiton de mail
+                    $this->result = [];
+                    $this->body['id'] =  $this->id;
+                    $this->body['emailVerified'] =  1;
+                    if ($this->user->update($this->body)){
+                        $this->result = [ "statut"=> 1,"message"=> "Succeed"];
+                    }else{
+                        $this->result = [ "statut"=> 0,"message"=> "Failed"];
+                    };
+                    break;
                 }
                 break;
-
             case "POST":
                 switch ($this->ressource){
                     // Le jwt d'autorisation sera crée à chaque inscription
@@ -45,23 +55,14 @@ class UserController extends AbstractController{
                             $this->result =  [ "statut" => 0,"message" =>  "login failed. Login or password wrong"];    
                         }
                         break; 
-                    case "updateUser":
-                        if ($this->user->update($this->body)){
-                            $this->result = [ "statut"=> 1,"message"=> "Succeed"];
-                        }else{
-                            $this->result = [ "statut"=> 0,"message"=> "Failed"];
-                        };
-                        break;
                 }
                 break;
+            case "PATCH" :
+                $this->result =$this->user->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
+                break;
             case "DELETE":
-                if ($this->ressource == "user"){
-                    if ($this->user->delete($this->id)){
-                        $this->result = [ "statut"=> 1,"message"=> "Succeed"];
-                    }else{
-                        $this->result = [ "statut"=> 0,"message"=> "Failed"];
-                    };
-                }
+                $this->result =$this->user->delete($this->id) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
+                break;
             }
             http_response_code(200);
             echo json_encode($this->result);

@@ -20,7 +20,7 @@ use Model\JWT\JWT;
 use Controller\ItemController;
 use Controller\UserController;  
 use Controller\MediaController;
-use Controller\AddressController;
+use Controller\ResidenceController;
 use Controller\CommentController;
 use Controller\DonationController;
 
@@ -77,14 +77,15 @@ switch ($ressource){
     case "signup":
     case "login":
     case "logout":
-    case "updateUser":
+    case "accountVerification":
     case "user":
         $controller =  new UserController();
         break;
     case "comment":
         $controller = new CommentController();
         break;
-    case "recover":    
+    case "recover":
+    case 'files':
     case "item":
     case "items":
         $controller = new ItemController();
@@ -92,9 +93,10 @@ switch ($ressource){
     case "donation":
         $controller = new DonationController();
         break;
-    case "address":
-        $controller = new AddressController();
+    case "residence":
+        $controller = new ResidenceController();
         break;
+    case "mediaUpdate":
     case "media" :
         $controller = new MediaController();
         break;

@@ -26,7 +26,7 @@ final class Donation extends AbstractModel {
             $sql =  "SELECT * FROM ed_donation WHERE idTarget=$id";
             $stmt = $this->con->prepare($sql);
             if ($stmt->execute()){
-                $this->result =$stmt->fetchAll(PDO::FETCH_ASSOC);;
+                $this->result = $stmt->fetchAll(PDO::FETCH_ASSOC);;
                 return  true;
             }else return false ; 
         }catch(PDOException $e){

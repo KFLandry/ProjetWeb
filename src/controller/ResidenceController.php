@@ -1,11 +1,11 @@
 <?php
 namespace Controller;
 use Controller\AbstractController;
-use Model\Address;
-class AddressController extends AbstractController{
+use Model\Residence;
+class ResidenceController extends AbstractController{
     private $address;
     public function handleRequest (){
-        $this->address = new Address($this->body["table_ass"]);
+        $this->address = new Residence($this->body["table_ass"]);
         switch ($this->method){
             case "GET":
                 if ($this->ressource =="address"){

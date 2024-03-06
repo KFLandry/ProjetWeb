@@ -15,12 +15,9 @@ abstract class AbstractController{
         $this->historic= new Historique();
         $uri =  explode("/",$_SERVER["REQUEST_URI"]);
         $this->ressource  = $uri[1];
-        $this->method = $_SERVER["REQUEST_METHOD"];
-        if(file_get_contents("php://input")){
-            $this->body  = json_decode(file_get_contents("php://input"),true);
-        }else{
-            $this->body = $_REQUEST;       
-        }
+        // Je force le verbe a PATCH pour une mediaUpdate
+        $this->method = $this->ressource !=="mediaUpdate" ? $_SERVER["REQUEST_METHOD"] : "PATCH" ;
+        $this->body = file_get_contents("php://input") ? json_decode(file_get_contents("php://input"),true) : $_REQUEST;
         $this->id = count($uri)> 2 ? $uri[2] : 0;
     }
     public abstract function handleRequest ();

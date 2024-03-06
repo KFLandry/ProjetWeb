@@ -3,30 +3,24 @@ namespace Model;
 use PDO;
 
 class User extends AbstractModel{
-    private $id;
-    private $lastName;
-    private $firstName;
-    private $email;
-    private  $role;
-    private  $phone;
-    private $password;
-    private $birthday;
     private $media;
+    private $residence ;
 
     public function __construct(){
         Parent::__construct("ed_user");
         $this->media = new Media('ed_user');
+        $this->residence = new Residence();
     }
-    public function get(int $id,bool $restrict = false){
+    public function get($id,bool $restrict = false){
         try{
-            // Mysql ne prend pas en compte les FULL JOIN par consequent on fait une union d'une d'une LEFT JOIN  et d'une RIGHT JOIN
+            //BON A SAVOIR : Mysql ne prend pas en compte les FULL JOIN par consequent on contourne en faisant une UNION d'une d'une LEFT JOIN  et d'une RIGHT JOIN
             $sql ="SELECT * FROM  ed_user WHERE id = $id";
-            
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row){
                 $this->result =  $row;
                 $this->result['medias'] = $this->media->get($id);
+                $this->result['residence'] = $this->residence->get($id);
                 unset($this->result['password']);
                 // Je suppime de mdp
                 if (!$restrict){
@@ -36,7 +30,9 @@ class User extends AbstractModel{
                     $result['id'] =  $row['id'];
                     $result['name'] = $row['firstName'].' '.$row['lastName'];
                     $result['dateCreation'] = $row['dateCreation'];
+                    $result['email'] =  $row['email'];
                     $result['medias'] = $this->media->get($id);
+                    $this->result['residence'] = $this->residence->get($id);
                     return $result;
                 }
             }else $this->result = [];
@@ -62,6 +58,7 @@ class User extends AbstractModel{
                     unset($this->result["password"]);
                     if ($row['id']) {
                         $this->result['medias'] = $this->media->get($row['id']);
+                        $this->result['residence'] = $this->residence->get($row['id']);
                     }
                     return true;
                 }
@@ -77,8 +74,12 @@ class User extends AbstractModel{
             $dataString = "";
             foreach ($data as $key => $value) {
                 if ($key != "id") {
-                    //Si parmis les informations à mettre à jour il y'a le mot de passe on le hashe avant.
-                    if ($key == "password"){
+                    // Mis à jour de la residence
+                    if ($key == 'residence'){
+                        $value['id'] = $data['id'];
+                        $this->residence->update($value);
+                    }else if ($key == "password"){
+                        //Si parmis les informations à mettre à jour il y'a le mot de passe on le hashe avant.
                         $value =password_hash($value.SALTING_KEY, PASSWORD_DEFAULT);
                     }
                     $dataString .= $key.'=\''.$value."', ";;
@@ -96,34 +97,33 @@ class User extends AbstractModel{
     }
     public function create($data) : bool {
         try{
-            $sql =  "INSERT INTO ed_user (role,firstName,lastName,email,phone,birthday,password,dateCreation) VALUES (:role,:firstName,:lastName,:email,:phone,:birthday,:password,:dateCreation);";
+            $sql =  "INSERT INTO ed_user (role,firstName,lastName,email,phone,birthday,password) VALUES (:role,:firstName,:lastName,:email,:phone,:birthday,:password);";
             $stmt =  $this->con->prepare($sql);
-            //On hashe le mot de passe avant de l'enregistrer avec une cle de sallage personnalisée
+            //On hashe le mot de passe avant de l'enregistrer avec une clé de sallage personnalisée
             $password =  $data["password"].SALTING_KEY;
             $data["password"] =  password_hash($password,PASSWORD_DEFAULT); 
-            $date['dateCreation'] =  date('Y-m-d');
-            $stmt->execute($data);
+            $stmt->execute([
+                "role"=> $data["role"],
+                "firstName"=> $data["firstName"],
+                "lastName"=> $data["lastName"],
+                "email"=> $data["email"],
+                "phone"=> $data["phone"],
+                "birthday"=> $data["birthday"],
+                "password"=> $data["password"],
+            ]);
             $sql = "SELECT * FROM ed_user WHERE id=LAST_INSERT_ID()";
             $stmt =  $this->con->query($sql);
             $this->result = $stmt->fetch(PDO::FETCH_ASSOC);
+            // On enregiste la residence 
+            $data['residence']['idUser'] = $this->result['id'];
+            $data['residence']['idItem'] = 0; //C'est parce que je veux pas mettre les tables d'association
+            $this->residence->create($data['residence']);
             unset($this->result['password']);
             return  true;
         }catch(\PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
-    }
-    private function fillUser($row){
-        $this->id  =  $row["id"];
-        $this->lastName  =  $row["lastName"];
-        $this->firstName  =  $row["firstName"];
-        $this->birthday  =  $row["birthday"];
-        $this->email  =  $row["email"];
-        $this->phone  =  $row["phone"];
-        $this->password  =  $row["password"];
-    }
-    public function setId($id) {
-        $this->id = $id;
     }
     public function __destruct(){}
 }

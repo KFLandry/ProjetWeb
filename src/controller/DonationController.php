@@ -12,9 +12,7 @@ class DonationController extends AbstractController {
         $this->donation = new Donation();
         $this->user = new User();
     }
-    public function create($data){
-
-    }
+    public function create(){}
     public function handleRequest (){
         switch($this->method) {
             case "GET":

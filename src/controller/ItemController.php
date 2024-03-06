@@ -27,6 +27,12 @@ class ItemController extends AbstractController{
                             $this->result = $this->item->getResult();
                         }
                         break;
+                    case 'recover' : 
+                        $this->result = $this->item->getRecover($this->id,'Target');
+                        break;
+                    case 'files' :
+                        $this->result = $this->item->getRecover($this->id,'Hunter');
+                        break;
                 }
                 break;
             case "POST":
@@ -47,8 +53,9 @@ class ItemController extends AbstractController{
                 switch ($this->ressource){
                     case "item":
                         $this->result = $this->item->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] :[ "statut"=> 0,"message"=> "Failed"];
-                        break;
+                        break;  
                 }
+                break;
             case "DELETE":
                 if ($this->ressource == "item"){
                     if ($this->item->delete($this->id)){

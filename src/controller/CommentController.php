@@ -5,7 +5,7 @@ use Model\Comment;
 class CommentController extends AbstractController {
     private $comment;
     public function handleRequest(){
-        $this->comment = new Comment($this->body["table_ass"]);
+        $this->comment = new Comment();
         switch ($this->method){
             case "GET":
                 if ($this->ressource =="comment"){
@@ -20,6 +20,9 @@ class CommentController extends AbstractController {
 
             case "POST":
                 switch ($this->ressource){
+                    case "comment":
+                        $this->result = $this->comment->create($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
+                        break;
                     case "updateComment":
                         if ($this->comment->update($this->body)){
                             $this->result = [ "statut"=> 1,"message"=> "Succeed"];
