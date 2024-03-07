@@ -49,8 +49,10 @@ final class Media extends AbstractModel {
                         $data['name'] =  $name;
                         $data['category'] =  $nameInput;
                         $data['location'] = "$uploads_dir/$name";
-                        $this->create($data);
-                    }else {return false;}
+                       return  $this->create($data);
+                    } else {
+                        return false;
+                    }
                 }
             }else if (isset($_FILES[$nameInput])){
                 $file = $_FILES[$nameInput];
@@ -69,11 +71,12 @@ final class Media extends AbstractModel {
                         $data['name'] =  $name;
                         $data['category'] =  $nameInput;
                         $data['location'] = "$uploads_dir/$name";
-                        $this->create($data);
+                        return $this->create($data);
                     }
-                }{return false;}
+                }else{
+                    return false;
+                }
             }
-            return true;
         }catch(\Exception $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
