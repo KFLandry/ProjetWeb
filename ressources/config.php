@@ -5,3 +5,4 @@ const DB_USERNAME= "root";
 const DB_PASSWORD= "";
 const SALTING_KEY = "La simplicité est la complexité resolue";
 const SECRET="MAMIWATA";
+const CHEMIN_IMAGES = 'ressources/images';

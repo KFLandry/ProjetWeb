@@ -36,7 +36,7 @@ final class Media extends AbstractModel {
     }
     public function moveMedia($idItem =null, $idUser =null, $nameInput = "files",$idMedia=0){
         try{
-            $uploads_dir = 'ressources/images';
+            $uploads_dir = CHEMIN_IMAGES;
             if (isset($_FILES["files"])){
                 foreach ($_FILES["files"]["error"] as $key => $error) {
                     if ($error == UPLOAD_ERR_OK) {
