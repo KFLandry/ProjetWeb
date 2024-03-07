@@ -14,7 +14,7 @@ final class Item extends AbstractModel {
     }
     public function getRecover($id, $who) {
         try{
-            $sql ="SELECT ed_item.id,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut FROM $this->table JOIN ed_donation ON (ed_item.id =  ed_donation.idItem) WHERE ed_donation.id$who=$id";
+            $sql ="SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut FROM $this->table JOIN ed_donation ON (ed_item.id =  ed_donation.idItem) WHERE ed_donation.id$who=$id";
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if($row){
@@ -34,8 +34,17 @@ final class Item extends AbstractModel {
         }
     }
     public function get($id){
+        // On fait une UNION car les full join ne sont pas possible sous Mysql
         try{
-            $sql ="SELECT * FROM $this->table WHERE id=$id";
+            $sql ="SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut
+            FROM $this->table
+            LEFT JOIN ed_donation ON $this->table.id = ed_donation.idItem
+            UNION ALL
+            SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut
+            FROM $this->table
+            RIGHT JOIN ed_donation ON $this->table.id = ed_donation.idItem
+            WHERE $this->table.id =$id;
+            ";
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $medias  =  $this->media->getAll($row['id']);
@@ -83,7 +92,10 @@ final class Item extends AbstractModel {
                 $sql = "SELECT * FROM ed_item WHERE id=LAST_INSERT_ID()";
                 $stmt =  $this->con->query($sql);
                 $this->result = $stmt->fetch(PDO::FETCH_ASSOC);
-                $this->media->moveMedia($this->result['id'],"","");
+                
+                if (!$this->media->moveMedia($this->result['id'],"","")){
+                    echo json_encode(['statut' => 2,'message'=> "Les images n'ont pas pu être uploader sur serveur!"]);
+                };
                   // On enregiste la residence 
                 $data['residence'] =  json_decode($data['residence'], true);
                 $data['residence']['idItem'] = $this->result['id'];
