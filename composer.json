@@ -1,0 +1,11 @@
+{
+    "name": "landrykankeu/projet-web",
+    "description": "IL s'agi de l'api d'une sorte de Don.fr pour les etudiants de Nice...Il est fait un php pure et totatement en orientée Objet.La base de donnée est gerée par MySQL...",
+    "type": "project",
+    "authors": [
+        {
+            "name": "landry kankeu"
+        }
+    ],
+    "require": {}
+}
