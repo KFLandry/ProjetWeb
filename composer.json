@@ -1,0 +1,12 @@
+{
+    "name": "utilisateur/projet-web",
+    "description": "API REST d'une sorte de don.fr..Uniquement en php...La base de données est gerée avec Mysql...",
+    "type": "project",
+    "authors": [
+        {
+            "name": "landry kankeu",
+            "email": "118926620+KFLandry@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
