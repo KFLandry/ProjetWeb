@@ -1,4 +1,10 @@
 <?php
+// Les variables d'environnements
+require_once realpath(__DIR__ . '/vendor/autoload.php');
+use Dotenv\Dotenv; 
+
+$dotenv =  Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 // Les en-têtes CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
