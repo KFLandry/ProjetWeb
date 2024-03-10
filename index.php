@@ -20,7 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 spl_autoload_register(function ($class) {
    $class =  str_replace("\\", DIRECTORY_SEPARATOR, $class);
-   $class = __DIR__ . DIRECTORY_SEPARATOR ."src".DIRECTORY_SEPARATOR.$class.".php";
+//    $class = __DIR__ . DIRECTORY_SEPARATOR ."src".DIRECTORY_SEPARATOR.$class.".php";
+   $class = "src" . DIRECTORY_SEPARATOR . $class . ".php";
    require_once  $class;
 });
 
@@ -41,7 +42,6 @@ if (isset($_SERVER['PATH_INFO'])){
     $ressource  = $uri[1];
 }
 //Token d'autorisation est indispensable pour toute les requêtes sauf celle d'authentification et de recuperation
-
 if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHOD'] === "GET" or isset($_REQUEST)) {
 }else{
     $token = "";
@@ -83,7 +83,6 @@ if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHO
         }
 }
 // On dispatche les methodes aux controllers
-var_dump($ressource);
 switch ($ressource){
     case "" : 
         http_response_code(200);
