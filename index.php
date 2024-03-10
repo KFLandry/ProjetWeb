@@ -1,8 +1,8 @@
 <?php
-// Les variables d'environnements
 require_once realpath(__DIR__ . '/vendor/autoload.php');
 use Dotenv\Dotenv; 
 
+// en mode test
 if (getenv('APP_ENV') !== 'production'){
     $dotenv =  Dotenv::createImmutable(__DIR__);
     $dotenv->load();

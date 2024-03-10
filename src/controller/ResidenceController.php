@@ -5,7 +5,7 @@ use Model\Residence;
 class ResidenceController extends AbstractController{
     private $address;
     public function handleRequest (){
-        $this->address = new Residence($this->body["table_ass"]);
+        $this->address = new Residence();
         switch ($this->method){
             case "GET":
                 if ($this->ressource =="address"){
