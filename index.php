@@ -14,16 +14,9 @@ header("Access-Control-Allow-Headers:*");
 
 //On renvoie les authorisations CORS au navigateur qui emet les requetes 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    // 204 pour car c'est une reponse sont contenu: No content 
     http_response_code(204);
     exit;
 }
-spl_autoload_register(function ($class) {
-   $class =  str_replace("\\", DIRECTORY_SEPARATOR, $class);
-//    $class = __DIR__ . DIRECTORY_SEPARATOR ."src".DIRECTORY_SEPARATOR.$class.".php";
-   $class = "src" . DIRECTORY_SEPARATOR . $class . ".php";
-   require_once  $class;
-});
 
 use Model\JWT\JWT;
 use Controller\ItemController;

@@ -14,7 +14,10 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "Controller\\": "src/Controller",
+            "Model\\": "src/Model",
+            "Model\\JWT\\": "src/Model/JWT",
+            "Model\\Historique\\": "src/Model/Historique"
         }
     }
 }
