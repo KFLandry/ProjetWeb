@@ -82,6 +82,10 @@ if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHO
 }
 // On dispatche les methodes aux controllers
 switch ($ressource){
+    case "" : 
+        http_response_code(200);
+        echo "Bienvenu sur l'api REST d'educycle";
+        exit;
     case "signup":
     case "login":
     case "logout":
