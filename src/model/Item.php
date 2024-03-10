@@ -12,7 +12,7 @@ final class Item extends AbstractModel {
         $this->residence = new Residence();
         $this->user =  new User();
     }
-    public function getRecover($id, $who) {
+    public function getRecover(int $id, $who) {
         try{
             $sql ="SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut FROM $this->table JOIN ed_donation ON (ed_item.id =  ed_donation.idItem) WHERE ed_donation.id$who=$id";
             $stmt= $this->con->query($sql);
@@ -58,7 +58,7 @@ final class Item extends AbstractModel {
             exit;
         }
     }
-    public function getAll($idUser = 0){
+    public function getAll(int $idUser = 0){
         try{
             $sql = $idUser == 0 ? "SELECT * FROM $this->table" : "SELECT * FROM $this->table WHERE idUser=$idUser";
             $stmt= $this->con->query($sql);
