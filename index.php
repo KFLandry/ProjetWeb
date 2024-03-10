@@ -65,7 +65,7 @@ if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHO
         }
 
         // On vérifie la signature
-        if(!$jwt->check($token, SECRET)){
+        if(!$jwt->check($token, $_ENV['SECRET'])){
         }
 
         // On vérifie l'expiration
