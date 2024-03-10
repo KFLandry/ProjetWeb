@@ -81,7 +81,6 @@ if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHO
         }
 }
 // On dispatche les methodes aux controllers
-var_dump($_SERVER);
 switch ($ressource){
     case "" : 
         http_response_code(200);
