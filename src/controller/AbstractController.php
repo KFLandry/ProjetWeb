@@ -14,6 +14,7 @@ abstract class AbstractController{
         $this->jwt= new JWT();
         $this->historic= new Historique();
         $uri =  explode("/",$_SERVER["PATH_INFO"]);
+        var_dump($this->ressource);
         $this->ressource  = $uri[1];
         // Je force le verbe a PATCH pour une mediaUpdate
         $this->method = $this->ressource !=="mediaUpdate" ? $_SERVER["REQUEST_METHOD"] : "PATCH" ;
