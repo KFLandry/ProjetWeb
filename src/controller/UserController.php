@@ -40,7 +40,7 @@ class UserController extends AbstractController{
                             // On declare le header du token conformemenet à la doc
                             // Ici le payload C'est quelque info sur l'utillisteur
                             $data = $this->user->getResult();
-                            $data['token'] = $this->jwt->generate($this->headers, $this->user->getResult(),SECRET); 
+                            $data['token'] = $this->jwt->generate($this->headers, $this->user->getResult(),$_ENV['SECRET']); 
                             $this->result =  ["statut" => 1,"message" =>  "Signup succeed","data" => $data];
                         }else{
                             $this->result =  [ "statut" => 0,"message" =>  "Signup failed"];
@@ -49,7 +49,7 @@ class UserController extends AbstractController{
                     case "login" : 
                         if ($this->user->login($this->body)){
                             $data = $this->user->getResult();
-                            $data['token'] = $this->jwt->generate($this->headers, $this->user->getResult(),SECRET); 
+                            $data['token'] = $this->jwt->generate($this->headers, $this->user->getResult(),$_ENV['SECRET']); 
                             $this->result =  [ "statut" => 1,"message" =>  "login succeed","data" => $data];
                         }else{
                             $this->result =  [ "statut" => 0,"message" =>  "login failed. Login or password wrong"];    
