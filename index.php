@@ -35,9 +35,11 @@ use Controller\DonationController;
 // http_response_code(204);
 
 // //On vérifie si on reçoit un token
-$uri = explode("/",$_SERVER['REQUEST_URI']);
-$ressource  = $uri[1];
-
+if (isset($_SERVER['PATH_INFO'])){
+    $uri = explode("/",$_SERVER['PATH_INFO']);
+    $ressource  = $uri[1];
+}
+$ressource ="";
 //Token d'autorisation est indispensable pour toute les requêtes sauf celle d'authentification et de recuperation
 
 if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHOD'] === "GET" or isset($_REQUEST)) {
@@ -81,6 +83,7 @@ if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHO
         }
 }
 // On dispatche les methodes aux controllers
+var_dump($ressource);
 switch ($ressource){
     case "" : 
         http_response_code(200);
