@@ -1,6 +1,7 @@
 {
     "name": "utilisateur/projet-web",
     "description": "API REST d'une sorte de don.fr..Uniquement en php...La base de données est gerée avec Mysql...",
+    "main" :  "index.php",
     "type": "project",
     "authors": [
         {
