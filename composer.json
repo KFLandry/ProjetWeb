@@ -16,6 +16,7 @@
         "psr-4": {
             "Controller\\": "src/controller",
             "Model\\": "src/model",
+            "Model\\DB\\": "src/model/db",
             "Model\\JWT\\": "src/model/JWT",
             "Model\\Historique\\": "src/model/historique"
         }
