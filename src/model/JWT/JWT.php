@@ -1,7 +1,6 @@
 <?php
 namespace Model\JWT;
 use DateTime;
-include_once("../ProjetWeb/ressources/config.php");
 class JWT
 {
     /**

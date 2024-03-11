@@ -1,11 +1,21 @@
 <?php
 namespace Model;
+
+use Exception;
+use Google\Cloud\Storage\StorageClient;
 use PDO;
 final class Media extends AbstractModel {
+    private $storage;
+    private $bucketName;
     private string $table_ass;
     private $field_ass;
     
     public function __construct(string $table_ass) {
+        $this->storage = new StorageClient([
+            'projectId' => $_ENV['PROJECT_ID'],
+            'keyFIlePath' => $_ENV['KEYFILEPATH']
+        ]);
+        $this->bucketName = "bucket_educycle";
         $this->table_ass = $table_ass;
         parent::__construct("ed_media");
         $x =  strlen($this->table_ass) - 3;
@@ -23,6 +33,28 @@ final class Media extends AbstractModel {
             exit;
         } 
     }
+    // 
+    public function storeImage(){
+        try {
+            $bucket  = $this->storage->bucket($this->bucketName);
+            $filetoupload ="ressources/IMG_3771 - Copy.png";
+            $bucket->upload(fopen($filetoupload,'r'),
+                [
+                    'name' => 'bucket_educycle/ressources/IMG_3771 - Copy.png'
+                ]
+            );
+            echo 'Le fichier a été uploadée'.PHP_EOL;
+            $objectUploaded =  $bucket->object('bucket_educycle/ressources/IMG_3771 - Copy.png');
+            var_dump(($objectUploaded));
+        } catch (Exception $e ){
+            var_dump($e);
+        }
+    }
+    public function uploadFIle(){
+        $bucket  = $this->storage->bucket($this->bucketName);
+        $bucket->objects();
+        var_dump($bucket);
+    }
     public function getAll(int $id){
         try{
             $sql ="SELECT * FROM $this->table WHERE id$this->field_ass=$id";
@@ -36,7 +68,7 @@ final class Media extends AbstractModel {
     }
     public function moveMedia($idItem =null, $idUser =null, $nameInput = "files",$idMedia=0){
         try{
-            $uploads_dir = CHEMIN_IMAGES;
+            $uploads_dir = $_ENV['CHEMIN_IMAGES'];
             if (isset($_FILES["files"])){
                 foreach ($_FILES["files"]["error"] as $key => $error) {
                     if ($error == UPLOAD_ERR_OK) {

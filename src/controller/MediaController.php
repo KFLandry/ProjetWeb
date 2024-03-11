@@ -17,6 +17,8 @@ class MediaController extends AbstractController{
                         $this->media->getAll($this->id);
                     }
                     $this->result = ['statut' => 1,'data' => $this->media->getResult()];
+                }else{
+                    $this->media->storeImage();
                 }
                 break;
             case "POST":

@@ -52,7 +52,7 @@ class User extends AbstractModel{
             $query->execute();
             $row =  $query->fetch(PDO::FETCH_ASSOC);
             if ($row){
-                if (password_verify($password.SALTING_KEY,$row["password"])){
+                if (password_verify($password.$_ENV['SALTING_KEY'],$row["password"])){
                     $this->result =  $row;
                     // Je suppime de mdp
                     unset($this->result["password"]);
@@ -80,7 +80,7 @@ class User extends AbstractModel{
                         $this->residence->update($value);
                     }else if ($key == "password"){
                         //Si parmis les informations à mettre à jour il y'a le mot de passe on le hashe avant.
-                        $value =password_hash($value.SALTING_KEY, PASSWORD_DEFAULT);
+                        $value =password_hash($value.$_ENV['SALTING_KEY'], PASSWORD_DEFAULT);
                     }
                     $dataString .= $key.'=\''.$value."', ";;
                 }
@@ -100,7 +100,7 @@ class User extends AbstractModel{
             $sql =  "INSERT INTO ed_user (role,firstName,lastName,email,phone,birthday,password) VALUES (:role,:firstName,:lastName,:email,:phone,:birthday,:password);";
             $stmt =  $this->con->prepare($sql);
             //On hashe le mot de passe avant de l'enregistrer avec une clé de sallage personnalisée
-            $password =  $data["password"].SALTING_KEY;
+            $password =  $data["password"].$_ENV['SALTING_KEY'];
             $data["password"] =  password_hash($password,PASSWORD_DEFAULT); 
             $stmt->execute([
                 "role"=> $data["role"],

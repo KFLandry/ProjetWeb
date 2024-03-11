@@ -1,4 +1,12 @@
 <?php
+require_once realpath(__DIR__ . '/vendor/autoload.php');
+use Dotenv\Dotenv; 
+
+// en mode test
+if (getenv('APP_ENV') !== 'production'){
+    $dotenv =  Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+}
 // Les en-têtes CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
@@ -6,15 +14,9 @@ header("Access-Control-Allow-Headers:*");
 
 //On renvoie les authorisations CORS au navigateur qui emet les requetes 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    // 204 pour car c'est une reponse sont contenu: No content 
     http_response_code(204);
     exit;
 }
-spl_autoload_register(function ($class) {
-   $class =  str_replace("\\", DIRECTORY_SEPARATOR, $class);
-   $class = __DIR__ . DIRECTORY_SEPARATOR ."src".DIRECTORY_SEPARATOR.$class.".php";
-   require_once  $class;
-});
 
 use Model\JWT\JWT;
 use Controller\ItemController;
@@ -27,11 +29,12 @@ use Controller\DonationController;
 // http_response_code(204);
 
 // //On vérifie si on reçoit un token
-$uri = explode("/",$_SERVER['REQUEST_URI']);
-$ressource  = $uri[1];
-
+$ressource ="";
+if (isset($_SERVER['PATH_INFO'])){
+    $uri = explode("/",$_SERVER['PATH_INFO']);
+    $ressource  = $uri[1];
+}
 //Token d'autorisation est indispensable pour toute les requêtes sauf celle d'authentification et de recuperation
-
 if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHOD'] === "GET" or isset($_REQUEST)) {
 }else{
     $token = "";
@@ -62,7 +65,7 @@ if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHO
         }
 
         // On vérifie la signature
-        if(!$jwt->check($token, SECRET)){
+        if(!$jwt->check($token, $_ENV['SECRET'])){
         }
 
         // On vérifie l'expiration
@@ -74,6 +77,10 @@ if ($ressource === 'signup' or $ressource === 'login' or $_SERVER['REQUEST_METHO
 }
 // On dispatche les methodes aux controllers
 switch ($ressource){
+    case "" : 
+        http_response_code(200);
+        echo "Bienvenu sur l'api REST d'educycle";
+        exit;
     case "signup":
     case "login":
     case "logout":
@@ -98,6 +105,7 @@ switch ($ressource){
         break;
     case "mediaUpdate":
     case "media" :
+    case 'test':
         $controller = new MediaController();
         break;
     default : 
