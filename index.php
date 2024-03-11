@@ -105,6 +105,7 @@ switch ($ressource){
         break;
     case "mediaUpdate":
     case "media" :
+    case 'test':
         $controller = new MediaController();
         break;
     default : 
