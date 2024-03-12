@@ -39,14 +39,15 @@ final class Item extends AbstractModel {
             $sql ="SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut
             FROM $this->table
             LEFT JOIN ed_donation ON $this->table.id = ed_donation.idItem
+            WHERE $this->table.id =$id;
             UNION ALL
             SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut
             FROM $this->table
             RIGHT JOIN ed_donation ON $this->table.id = ed_donation.idItem
-            WHERE $this->table.id =$id;
-            ";
+            WHERE $this->table.id =$id;";
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = null;
             $medias  =  $this->media->getAll($row['id']);
             $row['medias'] = $medias;
             $publisher =  $this->user->get($row['idUser'],true);
@@ -54,13 +55,13 @@ final class Item extends AbstractModel {
             $row['residence'] = $this->residence->get($row['id'],'idItem');
             $this->result =  $row;
         }catch(PDOException $e){
-            echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
+            echo json_encode(['statut' => 2,'message'=>  'Oui nous sommes...'.$e->getMessage()]);
             exit;
         }
     }
-    public function getAll(int $idUser = 0){
+    public function getAll($idUser = 0){
         try{
-            $sql = $idUser == 0 ? "SELECT * FROM $this->table" : "SELECT * FROM $this->table WHERE idUser=$idUser";
+            $sql = ($idUser==0 || $idUser ==null)? "SELECT * FROM $this->table" : "SELECT * FROM $this->table WHERE idUser=$idUser";
             $stmt= $this->con->query($sql);
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
             for ($i = 0; $i < count($rows); $i++){

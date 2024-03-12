@@ -101,7 +101,7 @@ class User extends AbstractModel{
             $stmt =  $this->con->prepare($sql);
             //On hashe le mot de passe avant de l'enregistrer avec une clé de sallage personnalisée
             $password =  $data["password"].$_ENV['SALTING_KEY'];
-            $data["password"] =  password_hash($password,PASSWORD_DEFAULT); 
+            $data["password"]=password_hash($password,PASSWORD_DEFAULT); 
             $stmt->execute([
                 "role"=> $data["role"],
                 "firstName"=> $data["firstName"],

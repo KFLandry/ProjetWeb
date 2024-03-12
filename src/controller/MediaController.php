@@ -22,9 +22,13 @@ class MediaController extends AbstractController{
                 }
                 break;
             case "POST":
+                if ($this->body==null){
+                    $this->result = [ "statut"=> 2,"message"=> "Le formulaire n'a pas pu charger côté serveur!"];
+                    break;
+                }
                 switch ($this->ressource){
                     case 'media' :  
-                        $this->result = $this->media->moveMedia("",$this->body['idUser'],$this->body['name']) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
+                        $this->result = $this->media->moveMedia("",$this->body['idUser'],$this->body['name']) ? [ "statut"=> 1,"message"=> "Succeed",'data' => $this->media->getResult()] : [ "statut"=> 0,"message"=> "Failed"];
                         break;
                     case "updateMedia":
                         if ($this->media->update($this->body)){

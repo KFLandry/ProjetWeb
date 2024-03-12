@@ -28,7 +28,7 @@ class Residence extends AbstractModel {
             "idItem"=> $data["idItem"],
             "name"=> $data["name"],
             "url"=> $data["url"],
-            "website"=> $data["website"]
+            "website"=> $data["website"] ?? ""
         ])){
             $sql = "SELECT * FROM $this->table WHERE id=LAST_INSERT_ID()";
             $stmt =  $this->con->query($sql);

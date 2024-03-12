@@ -11,9 +11,13 @@ final class Media extends AbstractModel {
     private $field_ass;
     
     public function __construct(string $table_ass) {
-        $keyPathFIle ="../Authorization_Google/projet-0-416307-ce730650ad96.json";
+        // Le fichier .env ne parse pas les blancs dans les structures donc je les remplace par des '%20' que je remplace ici par des espaces pour eviter de compromettre la clé
+        $file = json_decode($_ENV['GOOGLE_API_KEY'],true);
+        foreach($file as $property => $key){
+            $file[$property] = str_replace('%20'," ",$key);
+        }
         $this->cloudStorage = new StorageClient([
-            'keyFilePath' => $keyPathFIle
+            'keyFile' => $file,
         ]);
         $this->bucketName = $_ENV['BUCKET_NAME'];
         // On gère la table associative passé en paramètre
@@ -28,9 +32,13 @@ final class Media extends AbstractModel {
             $sql ="SELECT ed_media.id,ed_media.idItem,ed_media.category,ed_media.description,ed_media.location FROM ed_media JOIN $this->table_ass ON $this->table.id$this->field_ass = $this->table_ass.id WHERE $this->table.id$this->field_ass=$id ORDER BY id DESC ";
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $objet =  $this->cloudStorage->bucket($this->bucketName)->object($row['location']);
-            $row['location'] =  $objet->signedUrl(new \DateTime('Tomorrow'));
-            return $row;
+            if($row){
+                $objet =  $this->cloudStorage->bucket($this->bucketName)->object($row['location']);
+                $row['location'] =  $objet->signedUrl(new \DateTime('Tomorrow'));
+                return $row;
+            }else{
+                return [];
+            }
         }catch(\PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
@@ -72,7 +80,7 @@ final class Media extends AbstractModel {
     }
     public function moveMedia($idItem =null, $idUser =null, $nameInput = "files"){
         try{
-            $uploads_dir = $_ENV['BUCKET_IMAGES'];
+            $bucket = $this->cloudStorage->bucket($this->bucketName);
             if (isset($_FILES["files"])){
                 foreach ($_FILES["files"]["error"] as $key => $error) {
                     if ($error == UPLOAD_ERR_OK) {
@@ -103,8 +111,10 @@ final class Media extends AbstractModel {
                     $data['name'] =  $name;
                     $data['category'] =  $nameInput;
                     $data['location'] = $_ENV['BUCKET_IMAGES'].$name;
-                    return $this->create($data);
-                
+                    if ($this->create($data)){
+                        $this->result['newUrl'] = $bucket->object($data['location'])->signedUrl(new \DateTime('Tomorrow'));
+                        return true;
+                    }else{return false;}     
                 }else{
                     return false;
                 }

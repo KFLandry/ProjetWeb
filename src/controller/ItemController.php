@@ -22,24 +22,31 @@ class ItemController extends AbstractController{
                         $this->result =  $this->item->getResult(); 
                         break;
                     case "items":
-                        if( $this->id != 0){
+                        if($this->id!="" || $this->id!=0){
                             $this->item->getAll($this->id);  
                             $this->result = $this->item->getResult();
                         }
                         break;
-                    case 'recover' : 
-                        $this->result = $this->item->getRecover($this->id,'Target');
+                    case 'recover' :
+                        if ($this->id!="" || $this->id!=0){
+                            $this->result = $this->item->getRecover($this->id,'Target');
+                        }
                         break;
                     case 'files' :
-                        $this->result = $this->item->getRecover($this->id,'Hunter');
+                        if ($this->id!="" || $this->id!=0){
+                            $this->result = $this->item->getRecover($this->id,'Hunter');
+                        }
                         break;
                 }
                 break;
             case "POST":
                 switch ($this->ressource){
                     case "item":
-                        $this->item->create($this->body);
-                        $this->result = [ "statut"=> 1,"message"=> "Succeed"];
+                        if ($this->body!=null){
+                            $this->result =  $this->item->create($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
+                        }else{
+                            $this->result = ['statut' => 2, 'message' => "Le formualire n'a pas pu chargé côté serveur"];
+                        }
                         break;
                     case "recover":
                         $this->donation->create($this->body);
@@ -52,7 +59,11 @@ class ItemController extends AbstractController{
             case "PATCH" :
                 switch ($this->ressource){
                     case "item":
-                        $this->result = $this->item->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] :[ "statut"=> 0,"message"=> "Failed"];
+                        if ($this->body!= null){
+                            $this->result = $this->item->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] :[ "statut"=> 0,"message"=> "Failed"];
+                        }else{
+                            $this->result = ['statut' => 2, 'message' => "Le formualire n'a pas pu chargé côté serveur"];
+                        }
                         break;  
                 }
                 break;

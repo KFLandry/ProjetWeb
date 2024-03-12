@@ -36,14 +36,18 @@ class UserController extends AbstractController{
                 switch ($this->ressource){
                     // Le jwt d'autorisation sera crée à chaque inscription
                     case "signup":
-                        if ($this->user->create($this->body)){
-                            // On declare le header du token conformemenet à la doc
-                            // Ici le payload C'est quelque info sur l'utillisteur
-                            $data = $this->user->getResult();
-                            $data['token'] = $this->jwt->generate($this->headers, $this->user->getResult(),$_ENV['SECRET']); 
-                            $this->result =  ["statut" => 1,"message" =>  "Signup succeed","data" => $data];
+                        if ($this->body!=null){
+                            if ($this->user->create($this->body)){
+                                // On declare le header du token conformemenet à la doc
+                                // Ici le payload C'est quelque info sur l'utillisteur
+                                $data = $this->user->getResult();
+                                $data['token'] = $this->jwt->generate($this->headers, $this->user->getResult(),$_ENV['SECRET']); 
+                                $this->result =  ["statut" => 1,"message" =>  "Signup succeed","data" => $data];
+                            }else{
+                                $this->result =  [ "statut" => 0,"message" =>  "Signup failed"];
+                            }
                         }else{
-                            $this->result =  [ "statut" => 0,"message" =>  "Signup failed"];
+                            $this->result = ['statut' => 2, 'message' => "Le formualire n'a pas pu chargé côté serveur"];
                         }
                         break;
                     case "login" : 
