@@ -18,7 +18,7 @@ class MediaController extends AbstractController{
                     }
                     $this->result = ['statut' => 1,'data' => $this->media->getResult()];
                 }else{
-                    $this->media->storeImage();
+                    $this->media->getAllObjets();
                 }
                 break;
             case "POST":
@@ -36,7 +36,7 @@ class MediaController extends AbstractController{
                 }
                 break;
             case "PATCH":
-                $this->result = $this->media->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
+                $this->result = $this->media->update($this->body) ? [ "statut"=> 1,"message"=> "Succeed", 'data' => $this->media->getResult()] : [ "statut"=> 0,"message"=> "Failed"];
                 break;
             case "DELETE":
                 if ($this->ressource == "media"){
