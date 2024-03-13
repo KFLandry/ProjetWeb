@@ -37,6 +37,11 @@ class ItemController extends AbstractController{
                             $this->result = $this->item->getRecover($this->id,'Hunter');
                         }
                         break;
+                    case 'fullSearch':  
+                        if ($this->id!=""){
+                            $this->result =  $this->item->fullSearch($this->id);
+                        }
+                        break;
                 }
                 break;
             case "POST":

@@ -12,6 +12,68 @@ final class Item extends AbstractModel {
         $this->residence = new Residence();
         $this->user =  new User();
     }
+    public function fullSearch($keyWord){
+        try{
+            $sql =" SELECT 
+                ed_item.id,
+                ed_donation.id AS idDonation,
+                ed_item.idUser,
+                ed_item.name,
+                ed_item.category,
+                ed_item.description,
+                ed_item.worth,
+                ed_item.state,
+                ed_item.period,
+                ed_item.available,
+                ed_item.publishedDate,
+                ed_item.statut
+            FROM 
+                $this->table
+            LEFT JOIN 
+                ed_donation ON $this->table.id = ed_donation.idItem
+            WHERE 
+                ed_item.statut = 'normal'
+                AND MATCH (ed_item.name, ed_item.category, ed_item.description) AGAINST ($keyWord)
+            UNION ALL
+            SELECT 
+                ed_item.id,
+                ed_donation.id AS idDonation,
+                ed_item.idUser,
+                ed_item.name,
+                ed_item.category,
+                ed_item.description,
+                ed_item.worth,
+                ed_item.state,
+                ed_item.period,
+                ed_item.available,
+                ed_item.publishedDate,
+                ed_item.statut
+            FROM 
+                $this->table
+            RIGHT JOIN 
+                ed_donation ON ed_item.id = ed_donation.idItem
+            WHERE 
+                ed_item.statut = 'normal'
+            AND MATCH (ed_item.name,ed_item.description,ed_item.category) AGAINST ($keyWord);"; 
+
+            $stmt= $this->con->query($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($row){
+                $medias  =  $this->media->getAll($row['id']);
+                $row['medias'] = $medias;
+                $publisher =  $this->user->get($row['idUser'],true);
+                $row['publisher'] = $publisher;
+                $row['residence'] = $this->residence->get($row['id'],'idItem');
+                $this->result =  $row;
+                return $this->result;
+            }
+            return false;
+            
+        }catch(PDOException $e){
+            echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
+            exit;
+        }
+    }
     public function getRecover(int $id, $who) {
         try{
             $sql ="SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut FROM $this->table JOIN ed_donation ON (ed_item.id =  ed_donation.idItem) WHERE ed_donation.id$who=$id";
@@ -61,13 +123,14 @@ final class Item extends AbstractModel {
     }
     public function getAll($idUser = 0){
         try{
-            $sql = ($idUser==0 || $idUser ==null)? "SELECT * FROM $this->table" : "SELECT * FROM $this->table WHERE idUser=$idUser";
+            // On verifie ceci car quand les utlisateurs suppriment leur comptes, les annonces qu'ils ont publiées sont concervés
+            $sql = ($idUser==0 || $idUser ==null)? "SELECT * FROM $this->table WHERE idUser IS NOT NULL" : "SELECT * FROM $this->table WHERE idUser=$idUser";
             $stmt= $this->con->query($sql);
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
             for ($i = 0; $i < count($rows); $i++){
                 $rows[$i]['medias'] =  $this->media->getAll($rows[$i]['id']);
-                 $publisher =  $this->user->get($rows[$i]['idUser'],true);
-                 $rows[$i]['publisher'] = $publisher;
+                $publisher =  $this->user->get($rows[$i]['idUser'],true);
+                $rows[$i]['publisher'] = $publisher;
                  $rows[$i]['residence'] = $this->residence->get($rows[$i]['id'],'idItem');
             }
             $this->result =  $rows;

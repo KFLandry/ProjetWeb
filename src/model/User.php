@@ -61,9 +61,10 @@ class User extends AbstractModel{
                         $this->result['residence'] = $this->residence->get($row['id']);
                     }
                     return true;
-                }
+                }else{return false;}
             }
-            return false;
+            echo json_encode(['statut' => 2, 'message' => "Votre compte n'existe pas!"]);
+            exit;
         }catch(\PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
@@ -100,8 +101,8 @@ class User extends AbstractModel{
             $sql =  "INSERT INTO ed_user (role,firstName,lastName,email,phone,birthday,password) VALUES (:role,:firstName,:lastName,:email,:phone,:birthday,:password);";
             $stmt =  $this->con->prepare($sql);
             //On hashe le mot de passe avant de l'enregistrer avec une clé de sallage personnalisée
-            $password =  $data["password"].$_ENV['SALTING_KEY'];
-            $data["password"]=password_hash($password,PASSWORD_DEFAULT); 
+            $password =$data["password"].$_ENV['SALTING_KEY'];
+            $data["password"]=password_hash($password, PASSWORD_DEFAULT); 
             $stmt->execute([
                 "role"=> $data["role"],
                 "firstName"=> $data["firstName"],
@@ -117,11 +118,13 @@ class User extends AbstractModel{
             // On enregiste la residence 
             $data['residence']['idUser'] = $this->result['id'];
             $data['residence']['idItem'] = 0; //C'est parce que je veux pas mettre les tables d'association
-            $this->residence->create($data['residence']);
+            if ($this->residence->create($data['residence'])){
+                $this->result['residence'] =  $this->residence->getResult();
+            };
             unset($this->result['password']);
             return  true;
         }catch(\PDOException $e){
-            echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
+            echo json_encode(['statut' => 2,'message'=> $e->getCode()== "23000" ? "Cette addresse mail est déjà utilisée!" : $e->getMessage()]);
             exit;
         }
     }
