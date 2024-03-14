@@ -16,6 +16,7 @@ final class Media extends AbstractModel {
         foreach($file as $property => $key){
             $file[$property] = str_replace('%20'," ",$key);
         }
+        var_dump($_ENV);
         $this->cloudStorage = new StorageClient([
             'keyFile' => $file,
         ]);
@@ -51,7 +52,8 @@ final class Media extends AbstractModel {
             $bucket->upload(fopen($filePath,'r'), ['name' => $name]);
             return true;
         } catch (Exception $e ){
-            var_dump($e);
+            echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
+            exit;
         }
     }
     public function getAllObjets(){
