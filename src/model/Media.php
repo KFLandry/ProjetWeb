@@ -93,11 +93,9 @@ final class Media extends AbstractModel {
                             $data['name'] =  $name;
                             $data['category'] =  $nameInput;
                             $data['location'] = $_ENV['BUCKET_IMAGES'].$name;
-                            return  $this->create($data);
+                            $this->create($data);
                         }
-                    } else {
-                        return false;
-                    }
+                    } else {return false;}
                 }
             }else if (isset($_FILES[$nameInput])){
                 $file = $_FILES[$nameInput];

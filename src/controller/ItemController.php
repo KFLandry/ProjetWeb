@@ -47,10 +47,10 @@ class ItemController extends AbstractController{
             case "POST":
                 switch ($this->ressource){
                     case "item":
-                        if ($this->body!=null){
+                        if ($this->body!=null && isset($_FILES['files'])){
                             $this->result =  $this->item->create($this->body) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
                         }else{
-                            $this->result = ['statut' => 2, 'message' => "Le formualire n'a pas pu chargé côté serveur"];
+                            $this->result = ['statut' => 2, 'message' => "Le formualire n'a pas pu être correctement chargé côté serveur"];
                         }
                         break;
                     case "recover":

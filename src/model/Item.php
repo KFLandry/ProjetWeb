@@ -159,7 +159,7 @@ final class Item extends AbstractModel {
                 
                 if (!$this->media->moveMedia($this->result['id'],"","")){
                     echo json_encode(['statut' => 2,'message'=> "Les images n'ont pas pu être uploader sur serveur!"]);
-                };
+                }
                   // On enregiste la residence 
                 $data['residence'] =  json_decode($data['residence'], true);
                 $data['residence']['idItem'] = $this->result['id'];
