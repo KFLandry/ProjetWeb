@@ -95,8 +95,8 @@ final class Item extends AbstractModel {
             exit;
         }
     }
-    public function get($id){
-        // On fait une UNION car les full join ne sont pas possible sous Mysql
+    public function get($id){ 
+        // On fait une UNION car les full JOIN ne sont pas possible sous Mysql
         try{
             $sql ="SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut
             FROM $this->table
