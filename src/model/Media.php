@@ -96,7 +96,7 @@ final class Media extends AbstractModel {
                             $this->create($data);
                         }
                     } else {return false;}
-                }
+                }return true;
             }else if (isset($_FILES[$nameInput])){
                 $file = $_FILES[$nameInput];
                 if ($file['error'] == UPLOAD_ERR_OK) {
