@@ -16,6 +16,7 @@ final class Media extends AbstractModel {
         foreach($file as $property => $key){
             $file[$property] = str_replace('%20'," ",$key);
         }
+        var_dump($_ENV);
         $this->cloudStorage = new StorageClient([
             'keyFile' => $file,
         ]);
@@ -39,7 +40,7 @@ final class Media extends AbstractModel {
             }else{
                 return [];
             }
-        }catch(\PDOException $e){
+        }catch(Exception $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         } 
@@ -51,7 +52,8 @@ final class Media extends AbstractModel {
             $bucket->upload(fopen($filePath,'r'), ['name' => $name]);
             return true;
         } catch (Exception $e ){
-            var_dump($e);
+            echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
+            exit;
         }
     }
     public function getAllObjets(){
@@ -73,7 +75,7 @@ final class Media extends AbstractModel {
                 }
             }
             return  $rows;
-        }catch(\PDOException $e){
+        }catch(Exception $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
@@ -137,7 +139,7 @@ final class Media extends AbstractModel {
             $stmt =  $this->con->query($sql);
             $this->result =  $stmt->fetch(PDO::FETCH_ASSOC);
             return  true;
-        }catch(\PDOException $e){
+        }catch(Exception $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
@@ -157,7 +159,7 @@ final class Media extends AbstractModel {
                 $this->result['newUrl'] = $bucket->object($row['location'])->signedUrl(new \DateTime('Tomorrow'));
                 return true;
             }
-       }catch(\PDOException $e){
+       }catch(Exception $e){
            echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
            exit;
        }
@@ -171,7 +173,7 @@ final class Media extends AbstractModel {
             if ($object->exists()){
                 $object->delete();
             }
-        }catch(\PDOException $e){
+        }catch(Exception $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
