@@ -40,7 +40,7 @@ final class Media extends AbstractModel {
             }else{
                 return [];
             }
-        }catch(\PDOException $e){
+        }catch(Exception $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         } 
@@ -75,7 +75,7 @@ final class Media extends AbstractModel {
                 }
             }
             return  $rows;
-        }catch(\PDOException $e){
+        }catch(Exception $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
@@ -139,7 +139,7 @@ final class Media extends AbstractModel {
             $stmt =  $this->con->query($sql);
             $this->result =  $stmt->fetch(PDO::FETCH_ASSOC);
             return  true;
-        }catch(\PDOException $e){
+        }catch(Exception $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
@@ -159,7 +159,7 @@ final class Media extends AbstractModel {
                 $this->result['newUrl'] = $bucket->object($row['location'])->signedUrl(new \DateTime('Tomorrow'));
                 return true;
             }
-       }catch(\PDOException $e){
+       }catch(Exception $e){
            echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
            exit;
        }
@@ -173,7 +173,7 @@ final class Media extends AbstractModel {
             if ($object->exists()){
                 $object->delete();
             }
-        }catch(\PDOException $e){
+        }catch(Exception $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
