@@ -54,7 +54,7 @@ class UserController extends AbstractController{
                         if ($this->user->login($this->body)){
                             $data = $this->user->getResult();
                             $data['token'] = $this->jwt->generate($this->headers, $this->user->getResult(),$_ENV['SECRET']); 
-                            $this->result =  [ "statut" => 1,"message" =>  "login succeed","data" => $data];
+                            $this->result =  [ "statut" => 1,"message" =>  "login succeed","data" => $data];                        
                         }else{
                             $this->result =  [ "statut" => 0,"message" =>  "login failed. Login or password wrong"];    
                         }
@@ -68,6 +68,7 @@ class UserController extends AbstractController{
                 $this->result =$this->user->delete($this->id) ? [ "statut"=> 1,"message"=> "Succeed"] : [ "statut"=> 0,"message"=> "Failed"];
                 break;
             }
+            header('Content-Type: application/json');
             http_response_code(200);
             echo json_encode($this->result);
             exit;

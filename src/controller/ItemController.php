@@ -81,6 +81,8 @@ class ItemController extends AbstractController{
                     };
                 }
             }
+            header('Content-Type: application/json');
             echo json_encode($this->result);
+            exit;
     }
 }
