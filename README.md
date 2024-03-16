@@ -23,7 +23,7 @@ Le projet est sujet à evolution et pour l'instant les fonctionnalités qui sont
        l'interessé peut annuler la recupération et dès lors elle est gardée dans ses favoris, soit totalement la supprimer.
 -Gestion des ses annonces leurs etudiants peuvent facilement gerer les annnoces qu'ils ont faites dans leur espace(Supprimer, modifier)
 
-Technologies, Approche et Architecure de l'application
+Technologies, Approche et Architecture de l'application
 
  -Technologies
   educycle est codé en Vanila Javascript et en php Natif
@@ -32,14 +32,14 @@ Technologies, Approche et Architecure de l'application
     * EmailJS :  Ce service est utlisé pour envoyer des mails automatiques sur educycle
     * Cloud Storage  de Google: Ce service est utlisé pour stocker l'ensemble des images qui sont uploader sur la plateforme
     * Place API de google : Cette api est utilisé pour l'auto-completion des champs adresses dans les formulaires de la plateforme
+    
  -Approche de developpement
- 
    L'approche mis en avant dans le developpement de d'educycle est le Client Side Rendering avant :  
     *  Front-End  :  SPA (Single Page Application) en Vanilla Javascript
        url  :  https://github.com/KFLandry/eduCycle.git
     *  Back-end :  API REST en php natif 
        url  :  https://github.com/KFLandry/ProjetWeb.git
-    Leux deux parties communniquent grâce à l'API Fetch
+   Leux deux parties communniquent grâce à l'API Fetch
  
  -Architecture
   Educycle est codé en full Object-Oriented en suivant une architecture MVC(Model-View-Controller) pour le Front-end et MV (Model-    
