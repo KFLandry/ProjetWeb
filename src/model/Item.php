@@ -57,18 +57,15 @@ final class Item extends AbstractModel {
             AND MATCH (ed_item.name,ed_item.description,ed_item.category) AGAINST ($keyWord);"; 
 
             $stmt= $this->con->query($sql);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if($row){
-                $medias  =  $this->media->getAll($row['id']);
-                $row['medias'] = $medias;
-                $publisher =  $this->user->get($row['idUser'],true);
-                $row['publisher'] = $publisher;
-                $row['residence'] = $this->residence->get($row['id'],'idItem');
-                $this->result =  $row;
-                return $this->result;
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            for ($i = 0; $i < count($rows); $i++){
+                $rows[$i]['medias'] =  $this->media->getAll($rows[$i]['id']);
+                $publisher =  $this->user->get($rows[$i]['idUser'],true);
+                $rows[$i]['publisher'] = $publisher;
+                    $rows[$i]['residence'] = $this->residence->get($rows[$i]['id'],'idItem');
             }
-            return false;
-            
+            $this->result =  $rows;
+            return $this->result;
         }catch(PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
@@ -78,25 +75,22 @@ final class Item extends AbstractModel {
         try{
             $sql ="SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut FROM $this->table JOIN ed_donation ON (ed_item.id =  ed_donation.idItem) WHERE ed_donation.id$who=$id";
             $stmt= $this->con->query($sql);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if($row){
-                $medias  =  $this->media->getAll($row['id']);
-                $row['medias'] = $medias;
-                $publisher =  $this->user->get($row['idUser'],true);
-                $row['publisher'] = $publisher;
-                $row['residence'] = $this->residence->get($row['id'],'idItem');
-                $this->result =  $row;
-                return $this->result;
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            for ($i = 0; $i < count($rows); $i++){
+                $rows[$i]['medias'] =  $this->media->getAll($rows[$i]['id']);
+                $publisher =  $this->user->get($rows[$i]['idUser'],true);
+                $rows[$i]['publisher'] = $publisher;
+                    $rows[$i]['residence'] = $this->residence->get($rows[$i]['id'],'idItem');
             }
-            return false;
-            
+            $this->result =  $rows;
+            return $this->result;
         }catch(PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
     }
-    public function get($id){
-        // On fait une UNION car les full join ne sont pas possible sous Mysql
+    public function get($id){ 
+        // On fait une UNION car les full JOIN ne sont pas possible sous Mysql
         try{
             $sql ="SELECT ed_item.id,ed_donation.id as idDonation,ed_item.idUser,ed_item.name,ed_item.category,ed_item.description,ed_item.worth,ed_item.state,ed_item.period,ed_item.available,ed_item.publishedDate,ed_item.statut
             FROM $this->table
