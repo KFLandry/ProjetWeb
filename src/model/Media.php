@@ -19,7 +19,7 @@ final class Media extends AbstractModel {
         $file["type"]=$_ENV["type"]; 
         $file["project_id"]=$_ENV["project_id"]; 
         $file["private_key_id"]=$_ENV["private_key_id"]; 
-        $file["private_key"]= ($_ENV['APP_ENV'] == "production")  ? str_replace('%20'," ", $_ENV["private_key"]) : $_ENV['private_key']; 
+        $file["private_key"]=$_ENV['private_key']; 
         $file["client_id"]=$_ENV["client_id"]; 
         $file["client_email"]=$_ENV["client_email"]; 
         $file["auth_uri"]=$_ENV["auth_uri"]; 
