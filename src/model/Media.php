@@ -12,10 +12,21 @@ final class Media extends AbstractModel {
     
     public function __construct(string $table_ass) {
         // Le fichier .env ne parse pas les blancs dans les structures donc je les remplace par des '%20' que je remplace ici par des espaces pour eviter de compromettre la clé
-        $file = json_decode($_ENV['GOOGLE_API_KEY'],true);
-        foreach($file as $property => $key){
-            $file[$property] = str_replace('%20'," ",$key);
-        }
+        // $file = json_decode($_ENV['GOOGLE_API_KEY'],true);
+        // foreach($file as $property => $key){
+        //     $file[$property] = str_replace('%20'," ",$key);
+        // }
+        $file["type"]=$_ENV["type"]; 
+        $file["project_id"]=$_ENV["project_id"]; 
+        $file["private_key_id"]=$_ENV["private_key_id"]; 
+        $file["private_key"]= ($_ENV['APP_ENV'] == "production")  ? str_replace('%20'," ", $_ENV["private_key"]) : $_ENV['private_key']; 
+        $file["client_id"]=$_ENV["client_id"]; 
+        $file["client_email"]=$_ENV["client_email"]; 
+        $file["auth_uri"]=$_ENV["auth_uri"]; 
+        $file["token_uri"]=$_ENV["token_uri"]; 
+        $file["auth_provider_x509_cert_url"]=$_ENV["auth_provider_x509_cert_url"]; 
+        $file["client_x509_cert_url"]=$_ENV["client_x509_cert_url"]; 
+        $file["universe_domain"]=$_ENV["universe_domain"]; 
         $this->cloudStorage = new StorageClient([
             'keyFile' => $file,
         ]);
