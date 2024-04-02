@@ -30,8 +30,8 @@ use Controller\DonationController;
 
 // //On vérifie si on reçoit un token
 $ressource ="";
-if (isset($_SERVER['PATH_INFO'])){
-    $uri = explode("/",$_SERVER['PATH_INFO']);
+if (isset($_SERVER['ORIG_PATH_INFO'])){
+    $uri = explode("/",$_SERVER['ORIG_PATH_INFO']);
     $ressource  = $uri[1];
 }
 //Token d'autorisation est indispensable pour toute les requêtes sauf celle d'authentification et de recuperation
@@ -105,7 +105,6 @@ switch ($ressource){
         break;
     case "mediaUpdate":
     case "media" :
-    case 'test':
         $controller = new MediaController();
         break;
     default : 

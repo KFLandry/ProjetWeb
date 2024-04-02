@@ -34,4 +34,4 @@ final class Donation extends AbstractModel {
             exit;
         }
     }
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+}
