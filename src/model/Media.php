@@ -15,7 +15,7 @@ final class Media extends AbstractModel {
         // $file = json_decode($_ENV['GOOGLE_API_KEY'],true);
         // foreach($file as $property => $key){
         //     $file[$property] = str_replace('%20'," ",$key);
-        // } ...
+        // } 
         $file["type"]=$_ENV["type"]; 
         $file["project_id"]=$_ENV["project_id"]; 
         $file["private_key_id"]=$_ENV["private_key_id"]; 
