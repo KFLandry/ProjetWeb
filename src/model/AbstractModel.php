@@ -57,4 +57,5 @@ abstract class AbstractModel{
     public function getResult() : array  {
         return $this->result;
     }
+    public function __destruct(){}
 }

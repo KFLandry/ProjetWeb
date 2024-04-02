@@ -29,6 +29,8 @@ class DonationController extends AbstractController {
                 $this->result =  $this->donation->delete($this->id) ? [ "statut"=> 1,"message"=> "Succeed"] :[ "statut"=> 0,"message"=> "Failed"];
                 break;
         }
+        http_response_code(200);
         echo json_encode($this->result);
+        exit;
     }
 }
