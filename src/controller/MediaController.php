@@ -17,8 +17,6 @@ class MediaController extends AbstractController{
                         $this->media->getAll($this->id);
                     }
                     $this->result = ['statut' => 1,'data' => $this->media->getResult()];
-                }else{
-                    $this->media->getAllObjets();
                 }
                 break;
             case "POST":
@@ -51,6 +49,7 @@ class MediaController extends AbstractController{
                     };
                 }
             }
+            http_response_code(200);
             echo json_encode($this->result);
             exit;
     }
