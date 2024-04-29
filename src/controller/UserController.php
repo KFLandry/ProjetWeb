@@ -13,7 +13,7 @@ class UserController extends AbstractController{
         switch ($this->method){
             case "GET":
                 if ($this->ressource =="user"){
-                    if ($this->id != 0){
+                    if ($this->id != 0 || $this->id != ""){
                         $this->user->get($this->id);
                     }else{
                         $this->user->getAll();

@@ -2,11 +2,11 @@
 require_once realpath(__DIR__ . '/vendor/autoload.php');
 use Dotenv\Dotenv; 
 
-// en mode test
-if (getenv('APP_ENV') !== 'production'){
-    $dotenv =  Dotenv::createImmutable(__DIR__);
-    $dotenv->load();
-}
+/////// en mode test
+/////// if (getenv('APP_ENV') !== 'production'){
+$dotenv =  Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+/////// }
 // Les en-têtes CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
@@ -30,8 +30,8 @@ use Controller\DonationController;
 
 // //On vérifie si on reçoit un token
 $ressource ="";
-if (isset($_SERVER['ORIG_PATH_INFO'])){
-    $uri = explode("/",$_SERVER['ORIG_PATH_INFO']);
+if (isset($_SERVER[$_ENV["PATHINFO"]])){
+    $uri = explode("/",$_SERVER[$_ENV["PATHINFO"]]);
     $ressource  = $uri[1];
 }
 //Token d'autorisation est indispensable pour toute les requêtes sauf celle d'authentification et de recuperation

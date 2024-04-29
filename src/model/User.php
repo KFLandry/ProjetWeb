@@ -14,13 +14,13 @@ class User extends AbstractModel{
     public function get($id,bool $restrict = false){
         try{
             //BON A SAVOIR : Mysql ne prend pas en compte les FULL JOIN par consequent on contourne en faisant une UNION d'une d'une LEFT JOIN  et d'une RIGHT JOIN
-            $sql ="SELECT * FROM  ed_user WHERE id = $id";
+            $sql =is_integer($id) ? "SELECT * FROM  ed_user WHERE id = $id" : "SELECT * FROM  ed_user WHERE email = '$id'";
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row){
                 $this->result =  $row;
-                $this->result['medias'] = $this->media->get($id);
-                $this->result['residence'] = $this->residence->get($id);
+                $this->result['medias'] = $this->media->get($row['id']);
+                $this->result['residence'] = $this->residence->get($row['id']);
                 unset($this->result['password']);
                 // Je suppime de mdp
                 if (!$restrict){
@@ -31,8 +31,8 @@ class User extends AbstractModel{
                     $result['name'] = $row['firstName'].' '.$row['lastName'];
                     $result['dateCreation'] = $row['dateCreation'];
                     $result['email'] =  $row['email'];
-                    $result['medias'] = $this->media->get($id);
-                    $this->result['residence'] = $this->residence->get($id);
+                    $result['medias'] = $this->media->get($row['id']);
+                    $this->result['residence'] = $this->residence->get($row['id']);
                     return $result;
                 }
             }else $this->result = [];
