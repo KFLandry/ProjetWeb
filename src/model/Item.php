@@ -160,9 +160,11 @@ final class Item extends AbstractModel {
                 $data['residence']['idItem'] = $this->result['id'];
                 $data['residence']['idUser'] = 0; //C'est parce que je veux pas mettre les tables d'associations
                 $this->residence->create($data['residence']);
+                $this->con->commit();
                 return  true;
             }
         }catch(PDOException $e){
+            $this->con->rollBack();
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }

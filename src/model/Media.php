@@ -63,9 +63,12 @@ final class Media extends AbstractModel {
                             $this->create($data);
                         }
                     } else {
+                        $this->con->rollBack();
                         return false;
                     }
-                }return true;
+                }
+                $this->con->commit();
+                return true;
             }else if (isset($_FILES[$nameInput])){
                 $file = $_FILES[$nameInput];
                 if ($file['error'] == UPLOAD_ERR_OK) {
@@ -84,13 +87,21 @@ final class Media extends AbstractModel {
                         $data['name'] =  $name;
                         $data['category'] =  $nameInput;
                         $data['location'] = "$uploads_dir/$name";
-                        return $this->create($data);
+                        if ($this->create($data)){
+                            $this->con->commit();
+                            return true;
+                        }else{
+                            $this->con->rollBack();
+                            return false;
+                        };
                     }
                 }else{
+                    $this->con->rollBack();
                     return false;
                 }
             }
         }catch(\Exception $e){
+            $this->con->rollBack();
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
@@ -130,8 +141,10 @@ final class Media extends AbstractModel {
             }else{
                 $this->moveMedia("","",$data['name'], $id);
             }
+            $this->con->commit();
             return true;
        }catch(\PDOException $e){
+           $this->con->rollBack();
            echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
            exit;
        }
@@ -146,7 +159,9 @@ final class Media extends AbstractModel {
                 $stmt = $this->con->prepare($sql);
                 $stmt->execute();
             }
+            $this->con->commit();
         }catch(\PDOException $e){
+            $this->con->rollBack();
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }

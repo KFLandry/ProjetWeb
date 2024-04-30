@@ -91,6 +91,7 @@ class User extends AbstractModel{
             $stmt = $this->con->prepare($sql);
             return $stmt->execute();
         }catch(\PDOException $e){
+            $this->con->rollBack();
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
@@ -119,8 +120,10 @@ class User extends AbstractModel{
             $data['residence']['idItem'] = 0; //C'est parce que je veux pas mettre les tables d'association
             $this->residence->create($data['residence']);
             unset($this->result['password']);
+            $this->con->commit();
             return  true;
         }catch(\PDOException $e){
+            $this->con->rollBack();
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }

@@ -29,8 +29,11 @@ class Comment extends AbstractModel {
                 $sql = "SELECT * FROM $this->table WHERE id=LAST_INSERT_ID()";
                 $stmt =  $this->con->query($sql);
                 $this->result =  $stmt->fetch(PDO::FETCH_ASSOC);
+                $this->con->commit();
                 return  true;
-            }else return false ;    
+            }else {
+                return false ;
+            }    
         }catch(\PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
