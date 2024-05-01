@@ -98,6 +98,7 @@ class User extends AbstractModel{
     }
     public function create($data) : bool {
         try{
+            $this->con->beginTransaction();
             $sql =  "INSERT INTO ed_user (role,firstName,lastName,email,phone,birthday,password) VALUES (:role,:firstName,:lastName,:email,:phone,:birthday,:password);";
             $stmt =  $this->con->prepare($sql);
             //On hashe le mot de passe avant de l'enregistrer avec une clé de sallage personnalisée
@@ -120,8 +121,10 @@ class User extends AbstractModel{
             $data['residence']['idItem'] = 0; //C'est parce que je veux pas mettre les tables d'association
             $this->residence->create($data['residence']);
             unset($this->result['password']);
+            $this->con->commit();
             return  true;
         }catch(\PDOException $e){
+            $this->con->rollBack();
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }

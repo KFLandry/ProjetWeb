@@ -46,8 +46,7 @@ abstract class AbstractModel{
     public function delete($id){
         try{
             $sql = "DELETE FROM $this->table WHERE id=$id";
-            $stmt = $this->con->prepare($sql);
-            return $stmt->execute();
+            return $this->con->query($sql);
         }catch(\PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;

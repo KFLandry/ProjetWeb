@@ -15,7 +15,9 @@ final class Donation extends AbstractModel {
                 $stmt =  $this->con->query($sql);
                 $this->result =  $stmt->fetch(PDO::FETCH_ASSOC);
                 return  true;
-            }else return false ; 
+            }else {
+                return false;
+            }
         }catch(PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;

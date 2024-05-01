@@ -136,6 +136,7 @@ final class Item extends AbstractModel {
     public function create($data){
         // Je insère l'annonce en base et je déplace les images vers le repertoire des images de serveurs
         try{
+            $this->con->beginTransaction();
             $sql =  "INSERT INTO $this->table (idUser,name,worth,state,description,available,period,category) VALUES (:idUser,:name,:worth,:state,:description,:available,:period,:category)";
             $stmt = $this->con->prepare($sql);
             $stmt->bindParam("idUser", $data["idUser"]);
@@ -147,22 +148,20 @@ final class Item extends AbstractModel {
             $stmt->bindParam(':category', $data['category']);
             $stmt->bindParam(':available', $data['available']);
             if ($stmt->execute()){
-                $sql = "SELECT * FROM ed_item WHERE id=LAST_INSERT_ID()";
-                $stmt =  $this->con->query($sql);
-                $this->result = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                if (!$this->media->moveMedia($this->result['id'],"","")){
-                    echo json_encode(['statut' => 2,'message'=> "Les images n'ont pas pu être uploader sur serveur!"]);
-                    exit;
+                $lastId =  $this->con->lastInsertId();
+                if (!$this->media->moveMedia($lastId,"","")){
+                    throw new PDOException("Les images n'ont pas pu être uploader sur serveur!", 2);
                 }
                   // On enregiste la residence 
                 $data['residence'] =  json_decode($data['residence'], true);
-                $data['residence']['idItem'] = $this->result['id'];
+                $data['residence']['idItem'] = $lastId;
                 $data['residence']['idUser'] = 0; //C'est parce que je veux pas mettre les tables d'associations
                 $this->residence->create($data['residence']);
+                $this->con->commit();
                 return  true;
             }
         }catch(PDOException $e){
+            $this->con->rollBack();
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
