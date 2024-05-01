@@ -18,7 +18,6 @@ class DBConnexion{
     try{
         $this->con = new PDO("mysql:host=$this->dns;dbname=$this->dbName",$this->userName,$this->password);
         $this->con->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-        $this->con->beginTransaction();
     }catch(PDOException $e){
         echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
         exit;

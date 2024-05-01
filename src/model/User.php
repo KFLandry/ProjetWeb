@@ -91,13 +91,13 @@ class User extends AbstractModel{
             $stmt = $this->con->prepare($sql);
             return $stmt->execute();
         }catch(\PDOException $e){
-            $this->con->rollBack();
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
     }
     public function create($data) : bool {
         try{
+            $this->con->beginTransaction();
             $sql =  "INSERT INTO ed_user (role,firstName,lastName,email,phone,birthday,password) VALUES (:role,:firstName,:lastName,:email,:phone,:birthday,:password);";
             $stmt =  $this->con->prepare($sql);
             //On hashe le mot de passe avant de l'enregistrer avec une clé de sallage personnalisée

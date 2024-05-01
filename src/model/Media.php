@@ -17,7 +17,10 @@ final class Media extends AbstractModel {
             $sql ="SELECT ed_media.id,ed_media.idItem,ed_media.category,ed_media.description,ed_media.location FROM ed_media JOIN $this->table_ass ON $this->table.id$this->field_ass = $this->table_ass.id WHERE $this->table.id$this->field_ass=$id ORDER BY id DESC ";
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $row['location'] = $_ENV['URL_APP'].$row['location'];
+            // On complete l'url du fichier
+            if ($row){
+                $row['location'] = $_ENV['URL_APP'].$row['location'];
+            }
             return $row;
         }catch(\PDOException $e){
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
@@ -67,7 +70,6 @@ final class Media extends AbstractModel {
                         return false;
                     }
                 }
-                $this->con->commit();
                 return true;
             }else if (isset($_FILES[$nameInput])){
                 $file = $_FILES[$nameInput];
@@ -88,7 +90,6 @@ final class Media extends AbstractModel {
                         $data['category'] =  $nameInput;
                         $data['location'] = "$uploads_dir/$name";
                         if ($this->create($data)){
-                            $this->con->commit();
                             return true;
                         }else{
                             $this->con->rollBack();
@@ -141,10 +142,8 @@ final class Media extends AbstractModel {
             }else{
                 $this->moveMedia("","",$data['name'], $id);
             }
-            $this->con->commit();
             return true;
        }catch(\PDOException $e){
-           $this->con->rollBack();
            echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
            exit;
        }
@@ -159,9 +158,7 @@ final class Media extends AbstractModel {
                 $stmt = $this->con->prepare($sql);
                 $stmt->execute();
             }
-            $this->con->commit();
         }catch(\PDOException $e){
-            $this->con->rollBack();
             echo json_encode(['statut' => 2,'message'=> $e->getMessage()]);
             exit;
         }
