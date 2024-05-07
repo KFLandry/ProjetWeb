@@ -14,7 +14,7 @@ class User extends AbstractModel{
     public function get($id,bool $restrict = false){
         try{
             //BON A SAVOIR : Mysql ne prend pas en compte les FULL JOIN par consequent on contourne en faisant une UNION d'une d'une LEFT JOIN  et d'une RIGHT JOIN
-            $sql = !isset($_REQUEST['id']) ? "SELECT * FROM ed_user WHERE id = :id" : "SELECT * FROM ed_user WHERE email = :id";
+            $sql = is_integer($id) ? "SELECT * FROM ed_user WHERE id = :id" : "SELECT * FROM ed_user WHERE email = :id";
             $stmt= $this->con->prepare($sql);
             $stmt->execute(['id' => $id]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
