@@ -14,7 +14,13 @@ class User extends AbstractModel{
     public function get($id,bool $restrict = false){
         try{
             //BON A SAVOIR : Mysql ne prend pas en compte les FULL JOIN par consequent on contourne en faisant une UNION d'une d'une LEFT JOIN  et d'une RIGHT JOIN
-            $sql =is_integer($id) ? "SELECT * FROM  ed_user WHERE id = $id" : "SELECT * FROM  ed_user WHERE email = '$id'";
+//             Explication de l'expression régulière '/^\d+$/' :
+            // ^ : Ancre de début de chaîne.
+            // \d : Correspond à un chiffre (équivalent à [0-9]).
+            // + : Correspond à une ou plusieurs occurrences de l'élément précédent (dans ce cas, un chiffre).
+            // $ : Ancre de fin de chaîne.
+            
+            $sql = preg_match("/^\d+$/", $id) === 1  ? "SELECT * FROM  ed_user WHERE id = $id" : "SELECT * FROM  ed_user WHERE email = '$id'";
             $stmt= $this->con->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($row){
